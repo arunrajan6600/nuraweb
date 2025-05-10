@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { validateCells } from "@/lib/validate-cells";
 
-const postSchema = z.object({
+const projectSchema = z.object({
   title: z.string().min(1, "Title is required"),
   slug: z
     .string()
@@ -13,6 +13,7 @@ const postSchema = z.object({
       /^[a-z0-9-]+$/,
       "Slug must contain only lowercase letters, numbers, and hyphens"
     ),
+  description: z.string().min(1, "Description is required"),
   published: z.boolean().default(false),
   cells: z.array(
     z.object({
@@ -22,6 +23,10 @@ const postSchema = z.object({
     })
   ),
   imageUrl: z.string().optional(),
+  demoUrl: z.string().url().optional(),
+  sourceUrl: z.string().url().optional(),
+  technologies: z.array(z.string()),
+  category: z.string().min(1, "Category is required"),
 });
 
 export async function GET(
@@ -29,20 +34,15 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const post = await db.blogPost.findUnique({
+    const project = await db.project.findUnique({
       where: { id: params.id },
     });
 
-    if (!post) {
-      return new NextResponse("Post not found", { status: 404 });
+    if (!project) {
+      return new NextResponse("Project not found", { status: 404 });
     }
 
-    // Parse cells before sending
-    return NextResponse.json({
-      ...post,
-      cells:
-        typeof post.cells === "string" ? JSON.parse(post.cells) : post.cells,
-    });
+    return NextResponse.json(project);
   } catch (error) {
     return new NextResponse("Internal Server Error", { status: 500 });
   }
@@ -54,12 +54,12 @@ export async function PUT(
 ) {
   try {
     const session = await auth();
-    if (!session) {
+    if (!session || session.user.role !== "admin") {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const json = await request.json();
-    const body = postSchema.parse(json);
+    const body = projectSchema.parse(json);
 
     const validationResult = validateCells(body.cells);
     if (!validationResult.success) {
@@ -69,18 +69,19 @@ export async function PUT(
       );
     }
 
-    const post = await db.blogPost.update({
+    const project = await db.project.update({
       where: { id: params.id },
       data: {
         ...body,
-        cells: JSON.stringify(body.cells), // Serialize cells before saving
+        cells: JSON.stringify(body.cells),
+        technologies: JSON.stringify(body.technologies), // Serialize technologies array
       },
     });
 
-    // Parse cells back for response
+    // Parse technologies back to array for response
     return NextResponse.json({
-      ...post,
-      cells: JSON.parse(post.cells),
+      ...project,
+      technologies: JSON.parse(project.technologies),
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -99,11 +100,11 @@ export async function DELETE(
 ) {
   try {
     const session = await auth();
-    if (!session) {
+    if (!session || session.user.role !== "admin") {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    await db.blogPost.delete({
+    await db.project.delete({
       where: { id: params.id },
     });
 

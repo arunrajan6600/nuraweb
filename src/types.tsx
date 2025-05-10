@@ -15,3 +15,23 @@ export interface BlogPost {
   updatedAt: Date;
   authorId: string;
 }
+
+export interface Project {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  published: boolean;
+  cells: BlogCell[];
+  imageUrl?: string | null;
+  demoUrl?: string | null;
+  sourceUrl?: string | null;
+  technologies: string[];
+  category: string;
+  createdAt: Date;
+  updatedAt: Date;
+  authorId: string;
+}
+
+import type { ProjectWithParsedFields } from "@/types/project";
+export type ContentItem = BlogPost | ProjectWithParsedFields;

@@ -25,19 +25,17 @@ const postSchema = z.object({
   imageUrl: z.string().optional(),
 });
 
-export async function POST(request: Request) {
-  const session = await auth();
-
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+export async function POST(req: Request) {
   try {
-    const body = await request.json();
-    const validatedData = postSchema.parse(body);
+    const session = await auth();
+    if (!session) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
 
-    // Validate each cell's content based on its type
-    const validationResult = validateCells(validatedData.cells);
+    const json = await req.json();
+    const body = postSchema.parse(json);
+
+    const validationResult = validateCells(body.cells);
     if (!validationResult.success) {
       return NextResponse.json(
         { error: validationResult.error },
@@ -45,49 +43,47 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if slug is already taken
-    const existingPost = await db.blogPost.findUnique({
-      where: { slug: validatedData.slug },
-    });
-
-    if (existingPost) {
-      return NextResponse.json(
-        { error: "Slug already exists" },
-        { status: 400 }
-      );
-    }
-
-    // Get the user
-    const user = await db.user.findUnique({
-      where: { email: session.user.email },
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    // Create the post with author connection
     const post = await db.blogPost.create({
       data: {
-        title: validatedData.title,
-        slug: validatedData.slug,
-        published: validatedData.published,
-        cells: JSON.stringify(validatedData.cells),
-        imageUrl: validatedData.imageUrl,
-        author: {
-          connect: { id: user.id },
-        },
+        ...body,
+        authorId: session.user.id,
+        cells: JSON.stringify(body.cells), // Serialize cells before saving
       },
     });
 
-    return NextResponse.json(post);
+    // Parse cells back for response
+    return NextResponse.json({
+      ...post,
+      cells: JSON.parse(post.cells),
+    });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
-
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET() {
+  try {
+    const posts = await db.blogPost.findMany({
+      orderBy: { updatedAt: "desc" },
+    });
+
+    // Parse cells before sending
+    return NextResponse.json(
+      posts.map((post) => ({
+        ...post,
+        cells:
+          typeof post.cells === "string" ? JSON.parse(post.cells) : post.cells,
+      }))
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

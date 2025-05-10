@@ -11,13 +11,14 @@ model User {
   id            String     @id @default(cuid())
   name          String?
   email         String     @unique
-  password      String?    // Add the password field
+  password      String?
   emailVerified DateTime?
   image         String?
   role          String     @default("admin")
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
-  posts         BlogPost[] // Add the relation to BlogPost
+  posts         BlogPost[]
+  projects      Project[]  // Add the relation field
 }
 
 model BlogPost {
@@ -25,10 +26,28 @@ model BlogPost {
   title     String
   slug      String   @unique
   published Boolean  @default(false)
-  cells     Json     // array of BlogCell objects
+  cells     String   // Stored as JSON
   imageUrl  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  authorId  String   // Add the foreign key
-  author    User     @relation(fields: [authorId], references: [id]) // Add the relation to User
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+}
+
+model Project {
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  description  String
+  published    Boolean  @default(false)
+  cells        String   // Stored as JSON
+  imageUrl     String?
+  demoUrl      String?
+  sourceUrl    String?
+  technologies String   // Store as JSON string
+  category     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  author       User     @relation(fields: [authorId], references: [id])
+  authorId     String
 }
