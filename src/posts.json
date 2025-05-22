@@ -1,0 +1,79 @@
+[
+  {
+    "id": "1",
+    "title": "Getting Started with Next.js",
+    "status": "published",
+    "createdAt": "2023-05-15T12:00:00.000Z",
+    "updatedAt": "2023-05-15T12:00:00.000Z",
+    "cells": [
+      {
+        "id": "cell1",
+        "type": "markdown",
+        "content": "# Getting Started with Next.js\n\nNext.js is a React framework that enables server-side rendering, static site generation, and more. It's a great choice for building modern web applications.\n\n## Key Features\n\n- Server-side rendering\n- Static site generation\n- API routes\n- File-based routing\n- Built-in CSS and Sass support"
+      },
+      {
+        "id": "cell2",
+        "type": "image",
+        "content": {
+          "url": "/placeholder.svg?height=400&width=800&query=Next.js%20Framework",
+          "alt": "Next.js Framework"
+        }
+      },
+      {
+        "id": "cell3",
+        "type": "markdown",
+        "content": "## Installation\n\nTo create a new Next.js app, run the following command:\n\n```bash\nnpx create-next-app@latest my-app\ncd my-app\nnpm run dev\n```\n\nThis will create a new Next.js app in the `my-app` directory and start the development server."
+      },
+      {
+        "id": "cell4",
+        "type": "component",
+        "content": {
+          "name": "Alert",
+          "props": {
+            "title": "Important Note",
+            "description": "Make sure you have Node.js 18.17 or later installed on your machine."
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "title": "Working with React Components",
+    "status": "published",
+    "createdAt": "2023-05-20T14:30:00.000Z",
+    "updatedAt": "2025-05-22T17:24:14.822Z",
+    "cells": [
+      {
+        "id": "cell1",
+        "type": "markdown",
+        "content": "# Working with React Components\n\nReact components are the building blocks of React applications. They are reusable pieces of code that return React elements describing what should appear on the screen."
+      },
+      {
+        "id": "cell2",
+        "type": "video",
+        "content": {
+          "url": "https://www.youtube.com/embed/Tn6-PIqc4UM"
+        }
+      },
+      {
+        "id": "cell3",
+        "type": "markdown",
+        "content": "## Functional Components\n\nFunctional components are the modern way to write React components. They are simple JavaScript functions that return JSX.\n\n```jsx\nfunction Welcome(props) {\n  return <h1>Hello, {props.name}</h1>;\n}\n```"
+      },
+      {
+        "id": "cell4",
+        "type": "component",
+        "content": {
+          "name": "Card",
+          "props": {
+            "title": "Component Types",
+            "description": "There are two types of components in React",
+            "content": "Functional components and Class components are the two ways to define React components. Functional components are preferred in modern React applications.",
+            "footer": "Learn more in the React documentation"
+          }
+        }
+      }
+    ]
+  }
+]
