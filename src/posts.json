@@ -42,12 +42,12 @@
     "title": "Working with React Components",
     "status": "published",
     "createdAt": "2023-05-20T14:30:00.000Z",
-    "updatedAt": "2025-05-22T17:24:14.822Z",
+    "updatedAt": "2025-05-23T06:14:48.088Z",
     "cells": [
       {
         "id": "cell1",
         "type": "markdown",
-        "content": "# Working with React Components\n\nReact components are the building blocks of React applications. They are reusable pieces of code that return React elements describing what should appear on the screen."
+        "content": "\nReact components are the building blocks of React applications. They are reusable pieces of code that return React elements describing what should appear on the screen."
       },
       {
         "id": "cell2",
