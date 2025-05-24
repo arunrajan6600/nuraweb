@@ -7,7 +7,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   output: "export",
-  // basePath: "/me", // Replace with your repository name
+  basePath: "/me",
   distDir: "out",
   trailingSlash: true,
   images: {
