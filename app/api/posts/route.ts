@@ -2,11 +2,16 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getPosts, savePosts } from "@/lib/posts";
 import type { Post } from "@/types";
 
-// Only allow these routes in development
-const isDevMode = process.env.NODE_ENV === "development";
+// Check if admin mode is enabled
+const isAdminEnabled = process.env.NEXT_PUBLIC_ADMIN_ENABLED === "true";
 
-// Add static configuration for GitHub Pages
-export const dynamic = "error";
+// Use force-dynamic for API routes
+export const dynamic = "force-dynamic";
+
+// Check if write operations are allowed
+function isWriteAllowed() {
+  return isAdminEnabled || process.env.NODE_ENV === "development";
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -34,7 +39,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  if (!isDevMode) {
+  if (!isWriteAllowed()) {
     return NextResponse.json(
       { error: "Not allowed in production" },
       { status: 403 }

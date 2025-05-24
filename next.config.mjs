@@ -6,10 +6,9 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  output: "export",
-  basePath: "/me",
   distDir: "out",
-  trailingSlash: true,
+  trailingSlash: false,
+  skipTrailingSlashRedirect: true,
   images: {
     unoptimized: true,
   },
@@ -17,6 +16,28 @@ const nextConfig = {
     webpackBuildWorker: false,
   },
   poweredByHeader: false,
+  // Remove output: "export" to enable API routes
+  async redirects() {
+    const isAdminEnabled = process.env.NEXT_PUBLIC_ADMIN_ENABLED === 'true';
+    
+    if (!isAdminEnabled) {
+      return [
+        {
+          source: '/api/:path*',
+          has: [
+            {
+              type: 'header',
+              key: 'accept',
+              value: '(.*)/(.*)' // Match any content type for API requests
+            }
+          ],
+          permanent: false,
+          destination: '/404'
+        }
+      ];
+    }
+    return [];
+  }
 };
 
 export default nextConfig;

@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "NEXT_PUBLIC_ADMIN_ENABLED=false next dev --turbopack",
     "dev-super": "NEXT_PUBLIC_ADMIN_ENABLED=true next dev --turbopack",
-    "build": "next build",
+    "build": "NEXT_PUBLIC_ADMIN_ENABLED=true next build",
+    "build:no-admin": "NEXT_PUBLIC_ADMIN_ENABLED=false next build",
     "start": "next start",
     "lint": "next lint"
   },
