@@ -3,13 +3,13 @@ import { getPosts, savePosts } from "@/lib/posts";
 import type { Post } from "@/types";
 
 // Check if admin mode is enabled
-const isAdminEnabled = process.env.NEXT_PUBLIC_ADMIN_ENABLED === "true";
+const isAdminEnabled = process.env.NEXT_PUBLIC_ADMIN_ENABLED === 'true';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 // Check if write operations are allowed
 function isWriteAllowed() {
-  return isAdminEnabled || process.env.NODE_ENV === "development";
+  return isAdminEnabled || process.env.NODE_ENV === 'development';
 }
 
 export async function GET(request: NextRequest) {

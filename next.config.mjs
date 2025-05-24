@@ -1,22 +1,23 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // In dev-super mode, enable server features, otherwise use static export
-  output: process.env.NEXT_PUBLIC_ADMIN_ENABLED === 'true' ? undefined : 'export',
+  output:
+    process.env.NEXT_PUBLIC_ADMIN_ENABLED === "true" ? undefined : "export",
   // Use /me base path only in production (GitHub Pages)
-  basePath: process.env.NODE_ENV === 'production' ? '/me' : '',
+  basePath: process.env.NODE_ENV === "production" ? "/me" : "",
   // Disable API routes in static export
   rewrites: async () => {
-    if (process.env.NEXT_PUBLIC_ADMIN_ENABLED === 'true') {
-      return []
+    if (process.env.NEXT_PUBLIC_ADMIN_ENABLED === "true") {
+      return [];
     }
     return {
       beforeFiles: [
         {
-          source: '/api/:path*',
-          destination: '/_error'
-        }
-      ]
-    }
+          source: "/api/:path*",
+          destination: "/_error",
+        },
+      ],
+    };
   },
   eslint: {
     ignoreDuringBuilds: true,

@@ -2,21 +2,21 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getPosts, savePosts } from "@/lib/posts";
 
 // Check if admin mode is enabled
-const isAdminEnabled = process.env.NEXT_PUBLIC_ADMIN_ENABLED === 'true';
+const isAdminEnabled = process.env.NEXT_PUBLIC_ADMIN_ENABLED === "true";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 // Handle both trailing and non-trailing slashes by normalizing params
 function normalizeParams(params: { id: string }) {
   return {
     ...params,
-    id: params.id.replace(/\/$/, '')  // Remove trailing slash from ID
+    id: params.id.replace(/\/$/, ""), // Remove trailing slash from ID
   };
 }
 
 // Check if write operations are allowed
 function isWriteAllowed() {
-  return isAdminEnabled || process.env.NODE_ENV === 'development';
+  return isAdminEnabled || process.env.NODE_ENV === "development";
 }
 
 export async function GET(
@@ -83,7 +83,7 @@ export async function DELETE(
     const normalizedParams = normalizeParams(params);
 
     // Validate post ID exists and is not empty after normalization
-    if (!normalizedParams.id || normalizedParams.id.trim() === '') {
+    if (!normalizedParams.id || normalizedParams.id.trim() === "") {
       return NextResponse.json(
         { error: "Post ID is required" },
         { status: 400 }
@@ -94,17 +94,18 @@ export async function DELETE(
     const postToDelete = posts.find((p) => p.id === normalizedParams.id);
 
     if (!postToDelete) {
-      return NextResponse.json(
-        { error: "Post not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
     const updatedPosts = posts.filter((p) => p.id !== normalizedParams.id);
     await savePosts(updatedPosts);
 
     return NextResponse.json(
-      { success: true, message: "Post deleted successfully", id: normalizedParams.id },
+      {
+        success: true,
+        message: "Post deleted successfully",
+        id: normalizedParams.id,
+      },
       { status: 200 }
     );
   } catch (error) {
