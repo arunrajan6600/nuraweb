@@ -1,60 +1,87 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { getPosts, savePosts } from "@/lib/posts"
+import { type NextRequest, NextResponse } from "next/server";
+import { getPosts, savePosts } from "@/lib/posts";
 
 // Only allow these routes in development
-const isDevMode = process.env.NODE_ENV === "development"
+const isDevMode = process.env.NODE_ENV === "development";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-  const posts = await getPosts()
-  const post = posts.find((p) => p.id === params.id)
+// Add static configuration for GitHub Pages
+export const dynamic = "error";
+export const dynamicParams = false;
 
-  if (!post) {
-    return NextResponse.json({ error: "Post not found" }, { status: 404 })
-  }
-
-  return NextResponse.json(post)
+// Generate static params for all post IDs
+export async function generateStaticParams() {
+  const posts = await getPosts();
+  return posts.map((post) => ({
+    id: post.id,
+  }));
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
-  if (!isDevMode) {
-    return NextResponse.json({ error: "Not allowed in production" }, { status: 403 })
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const posts = await getPosts();
+  const post = posts.find((p) => p.id === params.id);
+
+  if (!post) {
+    return NextResponse.json({ error: "Post not found" }, { status: 404 });
   }
 
-  const updatedPost = await request.json()
-  const posts = await getPosts()
-  const index = posts.findIndex((p) => p.id === params.id)
+  return NextResponse.json(post);
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  if (!isDevMode) {
+    return NextResponse.json(
+      { error: "Not allowed in production" },
+      { status: 403 }
+    );
+  }
+
+  const updatedPost = await request.json();
+  const posts = await getPosts();
+  const index = posts.findIndex((p) => p.id === params.id);
 
   if (index === -1) {
-    return NextResponse.json({ error: "Post not found" }, { status: 404 })
+    return NextResponse.json({ error: "Post not found" }, { status: 404 });
   }
 
   // Update the timestamp
-  updatedPost.updatedAt = new Date().toISOString()
+  updatedPost.updatedAt = new Date().toISOString();
 
   // Preserve the creation date
   if (!updatedPost.createdAt && posts[index].createdAt) {
-    updatedPost.createdAt = posts[index].createdAt
+    updatedPost.createdAt = posts[index].createdAt;
   }
 
-  posts[index] = { ...updatedPost, id: params.id }
-  await savePosts(posts)
+  posts[index] = { ...updatedPost, id: params.id };
+  await savePosts(posts);
 
-  return NextResponse.json(posts[index])
+  return NextResponse.json(posts[index]);
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   if (!isDevMode) {
-    return NextResponse.json({ error: "Not allowed in production" }, { status: 403 })
+    return NextResponse.json(
+      { error: "Not allowed in production" },
+      { status: 403 }
+    );
   }
 
-  const posts = await getPosts()
-  const updatedPosts = posts.filter((p) => p.id !== params.id)
+  const posts = await getPosts();
+  const updatedPosts = posts.filter((p) => p.id !== params.id);
 
   if (posts.length === updatedPosts.length) {
-    return NextResponse.json({ error: "Post not found" }, { status: 404 })
+    return NextResponse.json({ error: "Post not found" }, { status: 404 });
   }
 
-  await savePosts(updatedPosts)
+  await savePosts(updatedPosts);
 
-  return NextResponse.json({ success: true })
+  return NextResponse.json({ success: true });
 }

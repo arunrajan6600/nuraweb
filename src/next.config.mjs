@@ -6,6 +6,10 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  output: "export",
+  // basePath: "/me", // Replace with your repository name
+  distDir: "out",
+  trailingSlash: true,
   images: {
     unoptimized: true,
   },
