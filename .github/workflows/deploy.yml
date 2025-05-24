@@ -36,33 +36,23 @@ jobs:
         uses: actions/configure-pages@v4
         
       - name: Install dependencies
-        run: |
-          pnpm install --frozen-lockfile
-          if [ -f "src/package.json" ]; then
-            cd src
-            if [ ! -f "pnpm-lock.yaml" ]; then
-              pnpm install --no-frozen-lockfile
-            else
-              pnpm install --frozen-lockfile
-            fi
-          fi
+        run: pnpm install --frozen-lockfile
         
       - name: Build with Next.js
-        working-directory: ./src
         run: pnpm run build
         
       - name: Fix permissions
         run: |
-          chmod -R u+w src/out
+          chmod -R u+w out
           
       - name: Update .nojekyll
         run: |
-          touch src/out/.nojekyll
+          touch out/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./src/out
+          path: ./out
 
   deploy:
     environment:
