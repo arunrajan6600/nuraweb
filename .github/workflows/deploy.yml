@@ -49,16 +49,15 @@ jobs:
           pnpm install --frozen-lockfile
         
       - name: Build with Next.js
-        run: pnpm run build:no-admin
+        run: |
+          chmod +x build.sh cleanup.sh
+          pnpm run build
         env:
           NEXT_PUBLIC_ADMIN_ENABLED: false
         
-      - name: Fix permissions
+      - name: Update output files
         run: |
           chmod -R u+w out
-          
-      - name: Update .nojekyll
-        run: |
           touch out/.nojekyll
           echo "isuryanarayanan.github.io" > out/CNAME
 
