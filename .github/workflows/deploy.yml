@@ -19,7 +19,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -36,7 +40,12 @@ jobs:
         uses: actions/configure-pages@v4
         
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          echo "Current directory contents:"
+          ls -la
+          echo "Checking for pnpm-lock.yaml:"
+          test -f pnpm-lock.yaml && echo "Lock file exists" || echo "Lock file is missing"
+          pnpm install --frozen-lockfile
         
       - name: Build with Next.js
         run: pnpm run build
