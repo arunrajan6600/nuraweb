@@ -51,7 +51,7 @@ function PostCard({ post }: { post: Post }) {
     <Card className="h-full flex flex-col hover:shadow-md transition-shadow overflow-hidden group">
       <div className="relative h-48 overflow-hidden">
         <img
-          src={thumbnailUrl || "/placeholder.svg"}
+          src={`${process.env.NODE_ENV === 'production' ? '/me' : ''}${thumbnailUrl || '/placeholder.svg'}`}
           alt={post.title}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />

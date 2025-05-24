@@ -9,7 +9,7 @@ export function ImageCell({ cell }: ImageCellProps) {
     <figure className="relative">
       <div className="relative w-full h-auto aspect-video overflow-hidden rounded-lg">
         <img
-          src={cell.content.url || "/placeholder.svg"}
+          src={`${process.env.NODE_ENV === 'production' ? '/me' : ''}${cell.content.url || '/placeholder.svg'}`}
           alt={cell.content.alt}
           className="w-full h-auto object-cover"
         />
