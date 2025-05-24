@@ -36,8 +36,9 @@ jobs:
         uses: actions/configure-pages@v4
         
       - name: Install dependencies
-        working-directory: ./src
-        run: pnpm install --frozen-lockfile
+        run: |
+          pnpm install --frozen-lockfile
+          cd src && pnpm install --frozen-lockfile
         
       - name: Build with Next.js
         working-directory: ./src
