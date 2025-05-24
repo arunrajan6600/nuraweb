@@ -49,7 +49,9 @@ jobs:
           pnpm install --frozen-lockfile
         
       - name: Build with Next.js
-        run: pnpm run build
+        run: pnpm run build:no-admin
+        env:
+          NEXT_PUBLIC_ADMIN_ENABLED: false
         
       - name: Fix permissions
         run: |
@@ -58,6 +60,7 @@ jobs:
       - name: Update .nojekyll
         run: |
           touch out/.nojekyll
+          echo "isuryanarayanan.github.io" > out/CNAME
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

@@ -3,9 +3,17 @@ import path from "path"
 import type { Post } from "@/types"
 
 const postsFilePath = path.join(process.cwd(), "posts.json")
+const publishedPostsFilePath = path.join(process.cwd(), "lib", "published-posts.json")
 
 export async function getPosts(): Promise<Post[]> {
   try {
+    // In production, only return published posts from the static file
+    if (process.env.NODE_ENV === "production") {
+      const data = await fs.readFile(publishedPostsFilePath, "utf8")
+      return JSON.parse(data)
+    }
+    
+    // In development, use the editable posts file
     const data = await fs.readFile(postsFilePath, "utf8")
     return JSON.parse(data)
   } catch (error) {

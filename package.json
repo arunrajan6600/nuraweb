@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NEXT_PUBLIC_ADMIN_ENABLED=false next dev --turbopack",
-    "dev-super": "NEXT_PUBLIC_ADMIN_ENABLED=true next dev --turbopack",
-    "build": "NEXT_PUBLIC_ADMIN_ENABLED=true next build",
-    "build:no-admin": "NEXT_PUBLIC_ADMIN_ENABLED=false next build",
+    "clean": "./cleanup.sh",
+    "dev": "pnpm clean && NEXT_PUBLIC_ADMIN_ENABLED=false next dev",
+    "dev-super": "pnpm clean && NEXT_PUBLIC_ADMIN_ENABLED=true next dev",
+    "build": "pnpm clean && NEXT_PUBLIC_ADMIN_ENABLED=false ./build.sh",
     "start": "next start",
     "lint": "next lint"
   },

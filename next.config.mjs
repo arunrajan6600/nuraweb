@@ -1,5 +1,23 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // In dev-super mode, enable server features, otherwise use static export
+  output: process.env.NEXT_PUBLIC_ADMIN_ENABLED === 'true' ? undefined : 'export',
+  // Use /me base path only in production (GitHub Pages)
+  basePath: process.env.NODE_ENV === 'production' ? '/me' : '',
+  // Disable API routes in static export
+  rewrites: async () => {
+    if (process.env.NEXT_PUBLIC_ADMIN_ENABLED === 'true') {
+      return []
+    }
+    return {
+      beforeFiles: [
+        {
+          source: '/api/:path*',
+          destination: '/_error'
+        }
+      ]
+    }
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -16,28 +34,6 @@ const nextConfig = {
     webpackBuildWorker: false,
   },
   poweredByHeader: false,
-  // Remove output: "export" to enable API routes
-  async redirects() {
-    const isAdminEnabled = process.env.NEXT_PUBLIC_ADMIN_ENABLED === 'true';
-    
-    if (!isAdminEnabled) {
-      return [
-        {
-          source: '/api/:path*',
-          has: [
-            {
-              type: 'header',
-              key: 'accept',
-              value: '(.*)/(.*)' // Match any content type for API requests
-            }
-          ],
-          permanent: false,
-          destination: '/404'
-        }
-      ];
-    }
-    return [];
-  }
 };
 
 export default nextConfig;

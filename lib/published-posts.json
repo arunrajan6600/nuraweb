@@ -1,0 +1,16 @@
+[
+  {
+    "id": "welcome",
+    "title": "Welcome to My Blog",
+    "status": "published",
+    "createdAt": "2025-05-24T00:00:00.000Z",
+    "updatedAt": "2025-05-24T00:00:00.000Z",
+    "cells": [
+      {
+        "id": "intro",
+        "type": "markdown",
+        "content": "# Welcome to My Blog\n\nThis is a sample post to get you started. You can edit this in development mode with admin access enabled."
+      }
+    ]
+  }
+]
