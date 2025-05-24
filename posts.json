@@ -17,10 +17,16 @@
   },
   {
     "title": "Test Post",
-    "cells": [],
+    "cells": [
+      {
+        "id": "1748113729605",
+        "type": "markdown",
+        "content": "dick"
+      }
+    ],
     "id": "1748112886237",
     "status": "published",
     "createdAt": "2025-05-24T18:54:46.237Z",
-    "updatedAt": "2025-05-24T19:05:09.189Z"
+    "updatedAt": "2025-05-24T19:08:53.668Z"
   }
 ]
