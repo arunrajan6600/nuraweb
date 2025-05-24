@@ -38,7 +38,14 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm install --frozen-lockfile
-          cd src && pnpm install --frozen-lockfile
+          if [ -f "src/package.json" ]; then
+            cd src
+            if [ ! -f "pnpm-lock.yaml" ]; then
+              pnpm install --no-frozen-lockfile
+            else
+              pnpm install --frozen-lockfile
+            fi
+          fi
         
       - name: Build with Next.js
         working-directory: ./src
