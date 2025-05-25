@@ -1,6 +1,6 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Github, Linkedin, Mail, Twitter } from "lucide-react"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Github, Linkedin, Mail, Twitter } from "lucide-react";
 
 export function Footer() {
   return (
@@ -11,16 +11,28 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Navigation</h3>
             <nav className="flex flex-col space-y-2">
-              <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Link
+                href="/"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 Home
               </Link>
-              <Link href="/posts" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Link
+                href="/posts"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 Blog
               </Link>
-              <Link href="/resume" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Link
+                href="/resume"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 Resume
               </Link>
-              <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Link
+                href="/contact"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 Contact
               </Link>
             </nav>
@@ -32,7 +44,7 @@ export function Footer() {
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" size="icon" asChild>
                 <a
-                  href="https://github.com/suryanarayanan"
+                  href="https://github.com/arunrajan6000"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="GitHub"
@@ -42,7 +54,7 @@ export function Footer() {
               </Button>
               <Button variant="outline" size="icon" asChild>
                 <a
-                  href="https://linkedin.com/in/suryanarayanan"
+                  href="https://linkedin.com/in/arunnura"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn"
@@ -52,7 +64,7 @@ export function Footer() {
               </Button>
               <Button variant="outline" size="icon" asChild>
                 <a
-                  href="https://twitter.com/suryanarayanan"
+                  href="https://twitter.com/arunnura"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Twitter"
@@ -61,7 +73,7 @@ export function Footer() {
                 </a>
               </Button>
               <Button variant="outline" size="icon" asChild>
-                <a href="mailto:contact@suryanarayanan.com" aria-label="Email">
+                <a href="mailto:contact@arunnura.com" aria-label="Email">
                   <Mail className="h-5 w-5" />
                 </a>
               </Button>
@@ -72,17 +84,21 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">About Me</h3>
             <p className="text-muted-foreground">
-              I'm Surya Narayanan, a passionate developer and technologist focused on creating elegant solutions to
-              complex problems.
+              I'm Surya Narayanan, a passionate developer and technologist
+              focused on creating elegant solutions to complex problems.
             </p>
-            <p className="text-muted-foreground mt-2">Feel free to reach out for collaborations or just to say hi!</p>
+            <p className="text-muted-foreground mt-2">
+              Feel free to reach out for collaborations or just to say hi!
+            </p>
           </div>
         </div>
 
         <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} Surya Narayanan. All rights reserved.</p>
+          <p>
+            © {new Date().getFullYear()} Surya Narayanan. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
-  )
+  );
 }

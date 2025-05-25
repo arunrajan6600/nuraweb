@@ -1,11 +1,13 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import dynamic from "next/dynamic"
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import dynamic from "next/dynamic";
 
 // Dynamically import the MatrixGridBackground with no SSR
-const MatrixGridBackground = dynamic(() => import("./matrix-grid-background"), { ssr: false })
+const MatrixGridBackground = dynamic(() => import("./matrix-grid-background"), {
+  ssr: false,
+});
 
 export function HeroSection() {
   // Update the section to have a black background and properly contain the matrix background
@@ -17,13 +19,19 @@ export function HeroSection() {
       {/* Content overlay */}
       <div className="container px-4 text-center z-10 relative">
         <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4 animate-fade-in text-white">
-          Surya Narayanan
+          {"<"}
+          Arun Nura
+          {" />"}
         </h1>
         <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto animate-fade-in-delay text-gray-300">
-          Making Sweet Science To Computers
+          {"{multi-disciplinary art practitioner}"}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-delay-2">
-          <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white border-none" asChild>
+          <Button
+            size="lg"
+            className="bg-blue-600 hover:bg-blue-700 text-white border-none"
+            asChild
+          >
             <Link href="/resume">Resume</Link>
           </Button>
           <Button
@@ -46,7 +54,7 @@ export function HeroSection() {
             window.scrollTo({
               top: window.innerHeight,
               behavior: "smooth",
-            })
+            });
           }}
         >
           <svg
@@ -66,5 +74,5 @@ export function HeroSection() {
         </Button>
       </div>
     </section>
-  )
+  );
 }

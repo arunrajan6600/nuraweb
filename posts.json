@@ -1,32 +1,164 @@
 [
   {
-    "title": "Test Post",
-    "cells": [],
-    "id": "1748112557643",
-    "status": "draft",
-    "createdAt": "2025-05-24T18:49:17.643Z",
-    "updatedAt": "2025-05-24T18:49:17.643Z"
-  },
-  {
-    "title": "Test Post",
-    "cells": [],
-    "id": "1748112775636",
-    "status": "draft",
-    "createdAt": "2025-05-24T18:52:55.636Z",
-    "updatedAt": "2025-05-24T18:52:55.636Z"
-  },
-  {
-    "title": "Test Post",
+    "title": "Electric Posts",
     "cells": [
       {
-        "id": "1748113729605",
+        "id": "1",
         "type": "markdown",
-        "content": "hey you sunshine"
+        "content": "పాతాളం പോലെ വായും പിളർന്ന് അലസാതെ കിടന്നുറങ്ങുന്ന വേതാള\"ത്തിന്റെ വായിലേക്ക് നോക്കാൻ...കറണ്ട്കാലുകൾ [text reference: ഭദ്രകാളി കളമെഴുത്തും പാട്ടും അനുഷ്ഠാനങ്ങളും; കല്ലാറ്റ് മണികണ്ഠ കുറുപ്പ്]"
+      },
+      {
+        "id": "2",
+        "type": "image",
+        "content": {
+          "url": "https://arunrajan6600.github.io/arunnura/images/arunr6601_distant_Photograph_of_an_electric_post_made_with_st_ee55b799-658f-499f-8eec-2ca206110788_1.png",
+          "alt": "Electric post installation 1"
+        }
+      },
+      {
+        "id": "3",
+        "type": "image",
+        "content": {
+          "url": "https://arunrajan6600.github.io/arunnura/images/arunr6601_Photograph_of_an_electric_post_made_of_standing_God_2fe382aa-b994-45ac-9da6-b6abc409c045_1.png",
+          "alt": "Electric post installation 2"
+        }
+      },
+      {
+        "id": "4",
+        "type": "image",
+        "content": {
+          "url": "https://arunrajan6600.github.io/arunnura/images/arunr6601_Photograph_of_eight_handed_Lord_Vishnu_statue_in_an_c2907032-8ea1-4f40-ae0e-39408e9463b3_1.png",
+          "alt": "Electric post installation 3"
+        }
+      },
+      {
+        "id": "5",
+        "type": "image",
+        "content": {
+          "url": "https://arunrajan6600.github.io/arunnura/images/arunr6601_Photograph_of_Jesus_Christ_statue_in_an_electric_po_618886ea-11b5-4cda-9224-ef1228de1545_0.png",
+          "alt": "Electric post installation 4"
+        }
+      },
+      {
+        "id": "6",
+        "type": "image",
+        "content": {
+          "url": "https://arunrajan6600.github.io/arunnura/images/arunr6601_Photograph_of_Street_light_in_the_shape_of_Lord_Ayy_fbe55b08-097b-45b7-a9c4-62f98571f08e_0.png",
+          "alt": "Electric post installation 5"
+        }
+      },
+      {
+        "id": "7",
+        "type": "image",
+        "content": {
+          "url": "https://arunrajan6600.github.io/arunnura/images/arunr6601_Photograph_of_Street_light_in_the_shape_of_Lord_Shi_1a155ab2-9ac0-4de9-8bdd-ff5b82a5e258_0.png",
+          "alt": "Electric post installation 6"
+        }
+      },
+      {
+        "id": "8",
+        "type": "image",
+        "content": {
+          "url": "https://arunrajan6600.github.io/arunnura/images/arunr6601_Photograph_of_Street_light_in_the_shape_of_Lord_Shi_8769c974-776d-4b15-82ce-634f5d1975a1_1.png",
+          "alt": "Electric post installation 7"
+        }
+      },
+      {
+        "id": "9",
+        "type": "image",
+        "content": {
+          "url": "https://arunrajan6600.github.io/arunnura/images/arunr6601_wide_angle_distant_Photograph_of_Lord_MUruga_statue_8bba4e62-5b6f-4734-84ff-13dfbaea4b0d_0.png",
+          "alt": "Electric post installation 8"
+        }
       }
     ],
-    "id": "1748112886237",
     "status": "published",
-    "createdAt": "2025-05-24T18:54:46.237Z",
-    "updatedAt": "2025-05-25T07:21:29.481Z"
+    "id": "1748158978690",
+    "createdAt": "2025-05-25T07:42:58.690Z",
+    "updatedAt": "2025-05-25T07:42:58.690Z"
+  },
+  {
+    "title": "DEITY OF SURVEILLANCE",
+    "cells": [
+      {
+        "id": "1",
+        "type": "markdown",
+        "content": "Traditionally, the concept of \"an all-seeing, all-knowing eye\" was meant to instill a sense of constant observation, a reminder that someone above is always watching, urging people to stay disciplined. In our contemporary context, however, surveillance extends beyond mere discipline—it's a relentless process of data extraction. Human presence is converted from flesh and blood into pixels and data. In this video, sound generated using puredata is layered over an image created with midjourney, evoking a sense of networks and ceaseless data transmission, immersing the viewer in a digital flow of observation and control."
+      }
+    ],
+    "status": "published",
+    "id": "1748159237514",
+    "createdAt": "2025-05-25T07:47:17.514Z",
+    "updatedAt": "2025-05-25T07:47:17.514Z"
+  },
+  {
+    "title": "KALLOLINI / കല്ലോലിനി",
+    "cells": [
+      {
+        "id": "1",
+        "type": "markdown",
+        "content": "Inspired by German painter Oskar Zwintscher's Grief (1898), I was trying to materialize the ignored/unknown weights of multiple existences every human bearing in the times of omniverses"
+      }
+    ],
+    "status": "published",
+    "id": "1748159278767",
+    "createdAt": "2025-05-25T07:47:58.767Z",
+    "updatedAt": "2025-05-25T07:47:58.767Z"
+  },
+  {
+    "title": "BHASHA NAISHADHA AMBU / ഭാഷാ നൈഷധ അമ്പു",
+    "cells": [
+      {
+        "id": "1",
+        "type": "markdown",
+        "content": "Bhasha naishadha ambu is an experiment to find and manipulate the numerical data from a vector embedding AI model and compare the vector values with the positions of 3D points from a masked video of ambu (the child). Then the words corresponding to the positional values from video is selected and super imposed over the video. The fundamental intention of this experiment is to explore how language, pixels, vectors are all interconnected in a world of pseudo-futurism which might transformed to a \"future\". [video credits: rajesh karthy, dr. jaseera majid]"
+      }
+    ],
+    "status": "published",
+    "id": "1748159310335",
+    "createdAt": "2025-05-25T07:48:30.335Z",
+    "updatedAt": "2025-05-25T07:48:30.335Z"
+  },
+  {
+    "title": "SAD SUPERHEROES IN KERALA",
+    "cells": [
+      {
+        "id": "1",
+        "type": "markdown",
+        "content": "1. Batman worried about his crops being attacked by bats, Palakkad.\n2. Wonder Woman struggling with washing clothes, Kozhikode.\n3. A boring day for Iron Man, Thrissur\n4. Spiderman was caught while stealing coconut and forced to do work in a construction site, Kollam\n5. Superman heartbroken upon not finding his sweetheart Black Widow in the last bus, Trivandrum\n6. Superman about to cry inside a tea shop in Ulloor, Trivandrum\n7. Tired Black Widow sleeping in a paddy field after whole night's work, Alappuzha"
+      }
+    ],
+    "status": "published",
+    "id": "1748159348679",
+    "createdAt": "2025-05-25T07:49:08.679Z",
+    "updatedAt": "2025-05-25T07:49:08.679Z"
+  },
+  {
+    "title": "KUDAMON POTTI, GERMAN SPEECH / കുടമൺ പോറ്റി, ജർമൻ പ്രസംഗം",
+    "cells": [
+      {
+        "id": "1",
+        "type": "markdown",
+        "content": "Kudamon Potti, protagonist from Malayalam movie 'Bhramayugam' giving a German speech. [Original speech by Adolf Hitler]"
+      }
+    ],
+    "status": "published",
+    "id": "1748159373214",
+    "createdAt": "2025-05-25T07:49:33.214Z",
+    "updatedAt": "2025-05-25T07:49:33.214Z"
+  },
+  {
+    "title": "FLESHY FRUITS / മാംസഫലങ്ങൾ",
+    "cells": [
+      {
+        "id": "1",
+        "type": "markdown",
+        "content": ""
+      }
+    ],
+    "status": "published",
+    "id": "1748159527106",
+    "createdAt": "2025-05-25T07:52:07.106Z",
+    "updatedAt": "2025-05-25T07:52:07.106Z"
   }
 ]
