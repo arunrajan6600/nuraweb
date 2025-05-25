@@ -43,12 +43,6 @@ export function PostEditor({ post, onUpdate, onDelete }: PostEditorProps) {
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value
     setTitle(newTitle)
-    // Auto-save after a short delay when typing
-    const timeoutId = setTimeout(() => {
-      onUpdate({ ...post, title: newTitle, cells, status })
-    }, 1000)
-
-    return () => clearTimeout(timeoutId)
   }
 
   const handleSave = async () => {
@@ -72,8 +66,6 @@ export function PostEditor({ post, onUpdate, onDelete }: PostEditorProps) {
 
   const handleCellsChange = (updatedCells: Post["cells"]) => {
     setCells(updatedCells)
-    // Auto-save changes when cells are updated
-    onUpdate({ ...post, title, cells: updatedCells, status })
   }
 
   const isDraft = status === "draft"
