@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import type { Post, PostStatus } from "@/types"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Trash2, Save, Eye, EyeOff, ExternalLink } from "lucide-react"
-import { CellList } from "@/components/admin/cell-list"
-import { AddCellDialog } from "@/components/admin/add-cell-dialog"
+import { useState } from "react";
+import type { Post, PostStatus } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Trash2, Save, Eye, EyeOff, ExternalLink } from "lucide-react";
+import { CellList } from "@/components/admin/cell-list";
+import { AddCellDialog } from "@/components/admin/add-cell-dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,57 +20,59 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { PostPreview } from "@/components/admin/post-preview"
-import { Badge } from "@/components/ui/badge"
-import { formatDate } from "@/lib/utils"
-import Link from "next/link"
+} from "@/components/ui/alert-dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PostPreview } from "@/components/admin/post-preview";
+import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/utils";
+import Link from "next/link";
 
 interface PostEditorProps {
-  post: Post
-  onUpdate: (post: Post) => void
-  onDelete: () => void
+  post: Post;
+  onUpdate: (post: Post) => void;
+  onDelete: () => void;
 }
 
 export function PostEditor({ post, onUpdate, onDelete }: PostEditorProps) {
-  const [title, setTitle] = useState(post.title)
-  const [cells, setCells] = useState(post.cells)
-  const [status, setStatus] = useState<PostStatus>(post.status || "draft")
-  const [isAddCellOpen, setIsAddCellOpen] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
+  const [title, setTitle] = useState(post.title);
+  const [cells, setCells] = useState(post.cells);
+  const [status, setStatus] = useState<PostStatus>(post.status || "draft");
+  const [isAddCellOpen, setIsAddCellOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTitle = e.target.value
-    setTitle(newTitle)
-  }
+    const newTitle = e.target.value;
+    setTitle(newTitle);
+  };
 
   const handleSave = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
-      await onUpdate({ ...post, title, cells, status })
+      await onUpdate({ ...post, title, cells, status });
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handlePublish = async () => {
-    setStatus("published")
-    await onUpdate({ ...post, title, cells, status: "published" })
-  }
+    setStatus("published");
+    await onUpdate({ ...post, title, cells, status: "published" });
+  };
 
   const handleUnpublish = async () => {
-    setStatus("draft")
-    await onUpdate({ ...post, title, cells, status: "draft" })
-  }
+    setStatus("draft");
+    await onUpdate({ ...post, title, cells, status: "draft" });
+  };
 
   const handleCellsChange = (updatedCells: Post["cells"]) => {
-    setCells(updatedCells)
-  }
+    setCells(updatedCells);
+  };
 
-  const isDraft = status === "draft"
+  const isDraft = status === "draft";
   const hasUnsavedChanges =
-    title !== post.title || JSON.stringify(cells) !== JSON.stringify(post.cells) || status !== post.status
+    title !== post.title ||
+    JSON.stringify(cells) !== JSON.stringify(post.cells) ||
+    status !== post.status;
 
   return (
     <div className="space-y-6">
@@ -78,11 +80,24 @@ export function PostEditor({ post, onUpdate, onDelete }: PostEditorProps) {
         <div className="space-y-1 flex-1">
           <div className="flex items-center gap-2">
             <Label htmlFor="post-title">Post Title</Label>
-            {post.status && <Badge variant={post.status === "published" ? "default" : "outline"}>{post.status}</Badge>}
+            {post.status && (
+              <Badge
+                variant={post.status === "published" ? "default" : "outline"}
+              >
+                {post.status}
+              </Badge>
+            )}
           </div>
-          <Input id="post-title" value={title} onChange={handleTitleChange} className="max-w-md" />
+          <Input
+            id="post-title"
+            value={title}
+            onChange={handleTitleChange}
+            className="max-w-md"
+          />
           {post.updatedAt && (
-            <p className="text-sm text-muted-foreground mt-1">Last updated: {formatDate(post.updatedAt)}</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Last updated: {formatDate(post.updatedAt)}
+            </p>
           )}
         </div>
 
@@ -96,7 +111,11 @@ export function PostEditor({ post, onUpdate, onDelete }: PostEditorProps) {
             </Link>
           )}
 
-          <Button variant="outline" onClick={handleSave} disabled={isSaving || !hasUnsavedChanges}>
+          <Button
+            variant="outline"
+            onClick={handleSave}
+            disabled={isSaving || !hasUnsavedChanges}
+          >
             <Save className="mr-2 h-4 w-4" />
             {isSaving ? "Saving..." : "Save"}
           </Button>
@@ -123,7 +142,8 @@ export function PostEditor({ post, onUpdate, onDelete }: PostEditorProps) {
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the post.
+                  This action cannot be undone. This will permanently delete the
+                  post.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -153,8 +173,8 @@ export function PostEditor({ post, onUpdate, onDelete }: PostEditorProps) {
             open={isAddCellOpen}
             onOpenChange={setIsAddCellOpen}
             onAddCell={(cell) => {
-              const updatedCells = [...cells, cell]
-              handleCellsChange(updatedCells)
+              const updatedCells = [...cells, cell];
+              handleCellsChange(updatedCells);
             }}
           />
         </TabsContent>
@@ -164,5 +184,5 @@ export function PostEditor({ post, onUpdate, onDelete }: PostEditorProps) {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
