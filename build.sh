@@ -1,6 +1,15 @@
 #!/bin/bash
 echo "Starting build process..."
 
+# Filter and copy published posts to lib/published-posts.json
+echo "Copying published posts to lib/published-posts.json"
+node -e "
+const fs = require('fs');
+const posts = JSON.parse(fs.readFileSync('posts.json', 'utf8'));
+const publishedPosts = posts.filter(post => post.status === 'published');
+fs.writeFileSync('lib/published-posts.json', JSON.stringify(publishedPosts, null, 2));
+"
+
 # Create temp directory
 mkdir -p temp-api
 
