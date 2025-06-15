@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 
 // Dynamically import the MatrixGridBackground with no SSR
 const MatrixGridBackground = dynamic(() => import("./matrix-grid-background"), {
@@ -13,42 +12,6 @@ const MatrixGridBackground = dynamic(() => import("./matrix-grid-background"), {
 export function HeroSection() {
   return (
     <section className="relative h-screen bg-black">
-      {/* Navigation Bar */}
-      <nav className="w-full px-6 py-4 flex justify-between items-center z-20 fixed top-0">
-        <Link href="/" className="flex items-center">
-          <Image
-            src="/placeholder-logo.svg"
-            alt="Logo"
-            width={40}
-            height={40}
-            className="w-auto h-8"
-          />
-        </Link>
-        <div className="flex gap-4">
-          <Button
-            variant="ghost"
-            className="text-white hover:text-white hover:bg-white/20"
-            asChild
-          >
-            <Link href="/about">About</Link>
-          </Button>
-          <Button
-            variant="ghost"
-            className="text-white hover:text-white hover:bg-white/20"
-            asChild
-          >
-            <Link href="/works">Works</Link>
-          </Button>
-          <Button
-            variant="ghost"
-            className="text-white hover:text-white hover:bg-white/20"
-            asChild
-          >
-            <Link href="/blog">Blog</Link>
-          </Button>
-        </div>
-      </nav>
-
       {/* Matrix Grid Background */}
       <MatrixGridBackground />
 

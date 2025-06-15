@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Lato, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/landing/footer";
 
 const lato = Lato({
   subsets: ["latin"],
@@ -29,14 +31,18 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
-      <body className={`${robotoMono.variable} ${lato.variable} font-roboto`}>
+      <body
+        className={`${robotoMono.variable} ${lato.variable} font-roboto min-h-screen bg-black`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

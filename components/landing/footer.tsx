@@ -79,18 +79,6 @@ export function Footer() {
               </Button>
             </div>
           </div>
-
-          {/* About Me */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">About Me</h3>
-            <p className="text-muted-foreground">
-              I'm Surya Narayanan, a passionate developer and technologist
-              focused on creating elegant solutions to complex problems.
-            </p>
-            <p className="text-muted-foreground mt-2">
-              Feel free to reach out for collaborations or just to say hi!
-            </p>
-          </div>
         </div>
 
         <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">

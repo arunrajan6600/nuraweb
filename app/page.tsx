@@ -1,13 +1,12 @@
-import { getPosts } from "@/lib/posts"
-import { AdminPanel } from "@/components/admin/admin-panel"
-import { HeroSection } from "@/components/landing/hero-section"
-import { PostsSection } from "@/components/landing/posts-section"
-import { Footer } from "@/components/landing/footer"
+import { getPosts } from "@/lib/posts";
+import { AdminPanel } from "@/components/admin/admin-panel";
+import { HeroSection } from "@/components/landing/hero-section";
+import { PostsSection } from "@/components/landing/posts-section";
 
 export default async function Home() {
-  const allPosts = await getPosts()
-  const publishedPosts = allPosts.filter((post) => post.status === "published")
-  const isAdminEnabled = process.env.NEXT_PUBLIC_ADMIN_ENABLED === "true"
+  const allPosts = await getPosts();
+  const publishedPosts = allPosts.filter((post) => post.status === "published");
+  const isAdminEnabled = process.env.NEXT_PUBLIC_ADMIN_ENABLED === "true";
 
   if (isAdminEnabled) {
     return (
@@ -15,7 +14,7 @@ export default async function Home() {
         <h1 className="text-4xl font-bold mb-8">My Personal Website</h1>
         <AdminPanel initialPosts={allPosts} />
       </main>
-    )
+    );
   }
 
   return (
@@ -24,7 +23,6 @@ export default async function Home() {
         <HeroSection />
         <PostsSection posts={publishedPosts} />
       </main>
-      <Footer />
     </div>
-  )
+  );
 }
