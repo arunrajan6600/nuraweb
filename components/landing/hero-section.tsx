@@ -10,7 +10,6 @@ const MatrixGridBackground = dynamic(() => import("./matrix-grid-background"), {
 });
 
 export function HeroSection() {
-  // Update the section to have a black background and properly contain the matrix background
   return (
     <section className="relative h-screen flex items-center justify-center bg-black">
       {/* Matrix Grid Background */}
@@ -18,12 +17,12 @@ export function HeroSection() {
 
       {/* Content overlay */}
       <div className="container px-4 text-center z-10 relative">
-        <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4 animate-fade-in text-white">
-          {"<"}
-          Arun Nura
-          {" />"}
+        <h1 className="text-5xl md:text-7xl tracking-tight mb-4 animate-fade-in text-white">
+          <span className="font-roboto">{"<"}</span>
+          <span className="font-lato font-bold">Arun Nura</span>
+          <span className="font-roboto">{" />"}</span>
         </h1>
-        <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto animate-fade-in-delay text-gray-300">
+        <p className="font-roboto text-xl md:text-2xl mb-8 max-w-2xl mx-auto animate-fade-in-delay text-gray-300">
           {"{multi-disciplinary art practitioner}"}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-delay-2">
