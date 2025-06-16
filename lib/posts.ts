@@ -39,3 +39,8 @@ export async function savePosts(posts: Post[]): Promise<void> {
 
   await fs.writeFile(postsFilePath, JSON.stringify(posts, null, 2), "utf8");
 }
+
+export async function getPublishedPosts(): Promise<Post[]> {
+  const posts = await getPosts();
+  return posts.filter((post) => post.status === "published");
+}
