@@ -7,6 +7,7 @@ import type { Post, PostStatus } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Trash2, Save, Eye, EyeOff, ExternalLink } from "lucide-react";
 import { CellList } from "@/components/admin/cell-list";
 import { AddCellDialog } from "@/components/admin/add-cell-dialog";
@@ -37,6 +38,7 @@ export function PostEditor({ post, onUpdate, onDelete }: PostEditorProps) {
   const [title, setTitle] = useState(post.title);
   const [cells, setCells] = useState(post.cells);
   const [status, setStatus] = useState<PostStatus>(post.status || "draft");
+  const [featured, setFeatured] = useState(post.featured || false);
   const [isAddCellOpen, setIsAddCellOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -48,7 +50,15 @@ export function PostEditor({ post, onUpdate, onDelete }: PostEditorProps) {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await onUpdate({ ...post, title, cells, status });
+      const updatedPost = {
+        ...post,
+        title,
+        cells,
+        status,
+        featured,
+        updatedAt: new Date().toISOString(),
+      };
+      await onUpdate(updatedPost);
     } finally {
       setIsSaving(false);
     }
@@ -56,12 +66,26 @@ export function PostEditor({ post, onUpdate, onDelete }: PostEditorProps) {
 
   const handlePublish = async () => {
     setStatus("published");
-    await onUpdate({ ...post, title, cells, status: "published" });
+    await onUpdate({
+      ...post,
+      title,
+      cells,
+      status: "published",
+      featured,
+      updatedAt: new Date().toISOString(),
+    });
   };
 
   const handleUnpublish = async () => {
     setStatus("draft");
-    await onUpdate({ ...post, title, cells, status: "draft" });
+    await onUpdate({
+      ...post,
+      title,
+      cells,
+      status: "draft",
+      featured,
+      updatedAt: new Date().toISOString(),
+    });
   };
 
   const handleCellsChange = (updatedCells: Post["cells"]) => {
@@ -72,87 +96,104 @@ export function PostEditor({ post, onUpdate, onDelete }: PostEditorProps) {
   const hasUnsavedChanges =
     title !== post.title ||
     JSON.stringify(cells) !== JSON.stringify(post.cells) ||
-    status !== post.status;
+    status !== post.status ||
+    featured !== post.featured;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1 flex-1">
-          <div className="flex items-center gap-2">
-            <Label htmlFor="post-title">Post Title</Label>
-            {post.status && (
-              <Badge
-                variant={post.status === "published" ? "default" : "outline"}
-              >
-                {post.status}
-              </Badge>
-            )}
+    <div className="space-y-8">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
+              value={title}
+              onChange={handleTitleChange}
+              className="w-full max-w-lg"
+            />
           </div>
-          <Input
-            id="post-title"
-            value={title}
-            onChange={handleTitleChange}
-            className="max-w-md"
-          />
-          {post.updatedAt && (
-            <p className="text-sm text-muted-foreground mt-1">
-              Last updated: {formatDate(post.updatedAt)}
-            </p>
-          )}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Switch
+                id="featured"
+                checked={featured}
+                onCheckedChange={setFeatured}
+              />
+              <Label htmlFor="featured">Featured</Label>
+            </div>
+            <Button
+              variant={status === "published" ? "default" : "outline"}
+              onClick={() =>
+                setStatus(status === "published" ? "draft" : "published")
+              }
+            >
+              {status === "published" ? (
+                <Eye className="mr-2 h-4 w-4" />
+              ) : (
+                <EyeOff className="mr-2 h-4 w-4" />
+              )}
+              {status === "published" ? "Published" : "Draft"}
+            </Button>
+          </div>
         </div>
+        {post.updatedAt && (
+          <p className="text-sm text-muted-foreground mt-1">
+            Last updated: {formatDate(post.updatedAt)}
+          </p>
+        )}
+      </div>
 
-        <div className="flex flex-wrap gap-2 justify-end">
-          {post.status === "published" && (
-            <Link href={`/posts/${post.id}`} passHref>
-              <Button variant="outline" size="sm">
-                <ExternalLink className="mr-2 h-4 w-4" />
-                View Post
-              </Button>
-            </Link>
-          )}
+      <div className="flex flex-wrap gap-2 justify-end">
+        {post.status === "published" && (
+          <Link href={`/posts/${post.id}`} passHref>
+            <Button variant="outline" size="sm">
+              <ExternalLink className="mr-2 h-4 w-4" />
+              View Post
+            </Button>
+          </Link>
+        )}
 
-          <Button
-            variant="outline"
-            onClick={handleSave}
-            disabled={isSaving || !hasUnsavedChanges}
-          >
-            <Save className="mr-2 h-4 w-4" />
-            {isSaving ? "Saving..." : "Save"}
+        <Button
+          variant="outline"
+          onClick={handleSave}
+          disabled={isSaving || !hasUnsavedChanges}
+        >
+          <Save className="mr-2 h-4 w-4" />
+          {isSaving ? "Saving..." : "Save"}
+        </Button>
+
+        {isDraft ? (
+          <Button onClick={handlePublish}>
+            <Eye className="mr-2 h-4 w-4" />
+            Publish
           </Button>
+        ) : (
+          <Button variant="outline" onClick={handleUnpublish}>
+            <EyeOff className="mr-2 h-4 w-4" />
+            Unpublish
+          </Button>
+        )}
 
-          {isDraft ? (
-            <Button onClick={handlePublish}>
-              <Eye className="mr-2 h-4 w-4" />
-              Publish
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" size="icon">
+              <Trash2 className="h-4 w-4" />
             </Button>
-          ) : (
-            <Button variant="outline" onClick={handleUnpublish}>
-              <EyeOff className="mr-2 h-4 w-4" />
-              Unpublish
-            </Button>
-          )}
-
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive" size="icon">
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the
-                  post.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={onDelete}>Delete</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the
+                post.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={onDelete}>Delete</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
       <Tabs defaultValue="edit" className="w-full">
