@@ -27,7 +27,7 @@ export function Navbar() {
           className="text-white hover:text-white hover:bg-white/20"
           asChild
         >
-          <Link href="/works">Works</Link>
+          <Link href="/posts">Works</Link>
         </Button>
         <Button
           variant="ghost"

@@ -15,29 +15,42 @@ interface PostsSectionProps {
 }
 
 export function PostsSection({ posts }: PostsSectionProps) {
+  // Filter only featured posts and limit to 5
+  const featuredPosts = posts.filter((post) => post.featured).slice(0, 5);
+
   return (
     <section className="py-20 px-4 bg-background" id="posts">
       <div className="container mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Latest Posts</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Featured Works
+          </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Explore my thoughts, projects, and insights on technology,
-            programming, and more.
+            A curated selection of my best works and projects.
           </p>
         </div>
 
-        {posts.length === 0 ? (
+        {featuredPosts.length === 0 ? (
           <div className="text-center p-8">
             <p className="text-muted-foreground">
-              No posts available yet. Check back soon!
+              No featured posts available yet. Check back soon!
             </p>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
+          <>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {featuredPosts.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
+            <div className="text-center mt-12">
+              <Link href="/posts">
+                <Button variant="outline" size="lg">
+                  View All Works
+                </Button>
+              </Link>
+            </div>
+          </>
         )}
       </div>
     </section>
