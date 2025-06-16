@@ -73,10 +73,10 @@
       }
     ],
     "status": "published",
-    "featured": true,
+    "featured": false,
     "id": "1748158978690",
     "createdAt": "2025-05-25T07:42:58.690Z",
-    "updatedAt": "2025-05-25T07:42:58.690Z"
+    "updatedAt": "2025-06-16T07:11:08.213Z"
   },
   {
     "title": "DEITY OF SURVEILLANCE",
@@ -88,10 +88,10 @@
       }
     ],
     "status": "published",
-    "featured": true,
+    "featured": false,
     "id": "1748159237514",
     "createdAt": "2025-05-25T07:47:17.514Z",
-    "updatedAt": "2025-05-25T07:47:17.514Z"
+    "updatedAt": "2025-06-16T07:10:59.603Z"
   },
   {
     "title": "KALLOLINI / കല്ലോലിനി",
@@ -103,10 +103,10 @@
       }
     ],
     "status": "published",
-    "featured": true,
+    "featured": false,
     "id": "1748159278767",
     "createdAt": "2025-05-25T07:47:58.767Z",
-    "updatedAt": "2025-05-25T07:47:58.767Z"
+    "updatedAt": "2025-06-16T07:10:49.841Z"
   },
   {
     "title": "BHASHA NAISHADHA AMBU / ഭാഷാ നൈഷധ അമ്പു",
@@ -120,7 +120,8 @@
     "status": "published",
     "id": "1748159310335",
     "createdAt": "2025-05-25T07:48:30.335Z",
-    "updatedAt": "2025-05-25T07:48:30.335Z"
+    "updatedAt": "2025-06-16T07:04:59.480Z",
+    "featured": true
   },
   {
     "title": "SAD SUPERHEROES IN KERALA",
@@ -134,7 +135,8 @@
     "status": "published",
     "id": "1748159348679",
     "createdAt": "2025-05-25T07:49:08.679Z",
-    "updatedAt": "2025-05-25T07:49:08.679Z"
+    "updatedAt": "2025-06-16T07:10:47.050Z",
+    "featured": false
   },
   {
     "title": "KUDAMON POTTI, GERMAN SPEECH / കുടമൺ പോറ്റി, ജർമൻ പ്രസംഗം",
