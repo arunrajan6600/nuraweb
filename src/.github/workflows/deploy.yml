@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+  NEXT_PUBLIC_BASE_PATH: /nuraweb
 
 jobs:
   build:
@@ -31,20 +31,20 @@ jobs:
         with:
           node-version: "20"
           cache: 'npm'
-          cache-dependency-path: './src/package-lock.json'
+          cache-dependency-path: 'package-lock.json'
 
       - name: Install dependencies
-        working-directory: ./src
         run: npm ci
 
       - name: Build with Next.js
-        working-directory: ./src
+        env:
+          NEXT_PUBLIC_BASE_PATH: /nuraweb
         run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./src/out
+          path: out
 
   deploy:
     environment:
