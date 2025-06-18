@@ -8,7 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import { Metadata } from "next";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 type Post = (typeof posts)[number];
@@ -23,9 +23,10 @@ function validateAndParseId(rawId: unknown) {
 }
 
 // Generate metadata for the page
-export function generateMetadata({ params }: Props): Metadata {
-  const id = validateAndParseId(params.id);
-  const post = getPost(id);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const resolvedId = validateAndParseId(id);
+  const post = getPost(resolvedId);
 
   if (!post) {
     return {
@@ -38,7 +39,7 @@ export function generateMetadata({ params }: Props): Metadata {
   };
 }
 
-// Generate static paths at build time
+// Generate static params for all published posts
 export function generateStaticParams() {
   return posts
     .filter((post) => post.status === "published")
@@ -47,10 +48,11 @@ export function generateStaticParams() {
     }));
 }
 
-export default function PostPage({ params }: Props) {
+export default async function PostPage({ params }: Props) {
   // Validate and parse id
-  const id = validateAndParseId(params.id);
-  const post = getPost(id);
+  const { id } = await params;
+  const resolvedId = validateAndParseId(id);
+  const post = getPost(resolvedId);
 
   if (!post || post.status !== "published") {
     notFound();

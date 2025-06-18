@@ -44,12 +44,7 @@ interface CellEditorProps {
   onDelete: () => void;
 }
 
-function SortableCell({
-  cell,
-  index,
-  onChange,
-  onDelete,
-}: CellEditorProps & { index: number }) {
+function SortableCell({ cell, onChange, onDelete }: CellEditorProps) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: cell.id });
 
@@ -308,7 +303,6 @@ export function VisualEditor({ post, onChange }: VisualEditorProps) {
               <SortableCell
                 key={cell.id}
                 cell={cell}
-                index={index}
                 onChange={(cell) => handleCellChange(index, cell)}
                 onDelete={() => handleCellDelete(index)}
               />

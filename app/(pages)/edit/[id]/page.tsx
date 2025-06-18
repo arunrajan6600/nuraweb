@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 type Post = (typeof posts)[number];
@@ -13,15 +13,23 @@ function getPost(id: string): Post | undefined {
   return posts.find((p) => p.id === id);
 }
 
+// Generate static params for all posts
+export function generateStaticParams() {
+  return posts.map((post) => ({
+    id: post.id,
+  }));
+}
+
 // Validate and transform params to ensure they're sanitized
 function validateAndParseId(rawId: unknown) {
   return typeof rawId === "string" ? rawId : "";
 }
 
 // Generate metadata for the page
-export function generateMetadata({ params }: Props): Metadata {
-  const id = validateAndParseId(params.id);
-  const post = getPost(id);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const resolvedId = validateAndParseId(id);
+  const post = getPost(resolvedId);
 
   if (!post) {
     return {
@@ -34,9 +42,10 @@ export function generateMetadata({ params }: Props): Metadata {
   };
 }
 
-export default function EditPostPage({ params }: Props) {
-  const id = validateAndParseId(params.id);
-  const post = getPost(id);
+export default async function EditPostPage({ params }: Props) {
+  const { id } = await params;
+  const resolvedId = validateAndParseId(id);
+  const post = getPost(resolvedId);
 
   if (!post) {
     notFound();
