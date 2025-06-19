@@ -12,11 +12,17 @@ export interface Post {
 
 export interface Cell {
   id: string;
-  type: "markdown" | "image";
-  content: string | ImageContent;
+  type: "markdown" | "image" | "video";
+  content: string | ImageContent | VideoContent;
 }
 
 export interface ImageContent {
   url: string;
   alt: string;
+}
+
+export interface VideoContent {
+  url: string;
+  title: string;
+  provider?: "youtube" | "vimeo" | "direct";
 }
