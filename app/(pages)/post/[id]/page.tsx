@@ -71,12 +71,16 @@ export default async function PostPage({ params }: Props) {
         </Link>
       </Button>
 
-      <div className="space-y-4 mb-8">
-        <h1 className="text-4xl font-bold tracking-tight">{post.title}</h1>
-        <p className="text-sm text-muted-foreground">Updated {formattedDate}</p>
+      <div className="space-y-6 mb-12">
+        <h1 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight">
+          {post.title}
+        </h1>
+        <p className="text-sm text-muted-foreground font-medium">
+          Updated {formattedDate}
+        </p>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-12">
         {post.cells.map((cell) => (
           <PostCell key={cell.id} cell={cell} />
         ))}

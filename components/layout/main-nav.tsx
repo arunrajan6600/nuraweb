@@ -16,22 +16,34 @@ export function MainNav() {
     <NavigationMenu className="hidden md:flex">
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+          <NavigationMenuLink
+            asChild
+            className={`${navigationMenuTriggerStyle()} font-medium`}
+          >
             <Link href="/">Home</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+          <NavigationMenuLink
+            asChild
+            className={`${navigationMenuTriggerStyle()} font-medium`}
+          >
             <Link href="/projects">Projects</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+          <NavigationMenuLink
+            asChild
+            className={`${navigationMenuTriggerStyle()} font-medium`}
+          >
             <Link href="/blog">Blog</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+          <NavigationMenuLink
+            asChild
+            className={`${navigationMenuTriggerStyle()} font-medium`}
+          >
             <Link href="/info">About</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
