@@ -1,6 +1,7 @@
-import { Cell } from "@/types/post";
+import { Cell, VideoContent } from "@/types/post";
 import { MarkdownCell } from "./markdown-cell";
 import { ImageCell } from "./image-cell";
+import { VideoCell } from "./video-cell";
 
 interface PostCellProps {
   cell: Cell;
@@ -14,6 +15,8 @@ export function PostCell({ cell }: PostCellProps) {
       return (
         <ImageCell content={cell.content as { url: string; alt: string }} />
       );
+    case "video":
+      return <VideoCell content={cell.content as VideoContent} />;
     default:
       return null;
   }

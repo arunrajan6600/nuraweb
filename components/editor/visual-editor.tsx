@@ -1,6 +1,6 @@
 "use client";
 
-import { Cell, ImageContent, Post } from "@/types/post";
+import { Cell, ImageContent, Post, VideoContent } from "@/types/post";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -68,14 +68,23 @@ function SortableCell({ cell, onChange, onDelete }: CellEditorProps) {
 }
 
 function CellEditor({ cell, onChange, onDelete }: CellEditorProps) {
-  const handleContentChange = (value: string | ImageContent) => {
+  const handleContentChange = (value: string | ImageContent | VideoContent) => {
     onChange({ ...cell, content: value });
   };
 
-  const handleTypeChange = (type: "markdown" | "image") => {
+  const handleTypeChange = (type: "markdown" | "image" | "video") => {
     if (type === cell.type) return;
 
-    const newContent = type === "markdown" ? "" : { url: "", alt: "" };
+    let newContent: string | ImageContent | VideoContent;
+    if (type === "markdown") {
+      newContent = "";
+    } else if (type === "image") {
+      newContent = { url: "", alt: "" };
+    } else {
+      // Default to video
+      newContent = { url: "", title: "", provider: "youtube" };
+    }
+
     onChange({ ...cell, type, content: newContent });
   };
 
@@ -92,6 +101,7 @@ function CellEditor({ cell, onChange, onDelete }: CellEditorProps) {
           <SelectContent>
             <SelectItem value="markdown">Markdown</SelectItem>
             <SelectItem value="image">Image</SelectItem>
+            <SelectItem value="video">Video</SelectItem>
           </SelectContent>
         </Select>
         <Button
@@ -110,7 +120,7 @@ function CellEditor({ cell, onChange, onDelete }: CellEditorProps) {
           onChange={(e) => handleContentChange(e.target.value)}
           className="min-h-[200px] font-mono"
         />
-      ) : (
+      ) : cell.type === "image" ? (
         <div className="space-y-4">
           <div className="space-y-2">
             <Label>Image URL</Label>
@@ -137,6 +147,59 @@ function CellEditor({ cell, onChange, onDelete }: CellEditorProps) {
               }
               placeholder="Description of the image"
             />
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>Video URL</Label>
+            <Input
+              value={(cell.content as VideoContent).url}
+              onChange={(e) =>
+                handleContentChange({
+                  ...(cell.content as VideoContent),
+                  url: e.target.value,
+                  title: (cell.content as VideoContent).title || "",
+                  provider:
+                    (cell.content as VideoContent).provider || "youtube",
+                })
+              }
+              placeholder="https://www.youtube.com/watch?v=... or https://vimeo.com/..."
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Title (Optional)</Label>
+            <Input
+              value={(cell.content as VideoContent).title || ""}
+              onChange={(e) =>
+                handleContentChange({
+                  ...(cell.content as VideoContent),
+                  title: e.target.value,
+                })
+              }
+              placeholder="Video title or caption"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Provider</Label>
+            <Select
+              value={(cell.content as VideoContent).provider || "youtube"}
+              onValueChange={(value) =>
+                handleContentChange({
+                  ...(cell.content as VideoContent),
+                  provider: value as "youtube" | "vimeo" | "direct",
+                })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="youtube">YouTube</SelectItem>
+                <SelectItem value="vimeo">Vimeo</SelectItem>
+                <SelectItem value="direct">Direct Link</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       )}
