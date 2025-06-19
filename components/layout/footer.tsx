@@ -1,80 +1,19 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { toast } from "sonner";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
 import { Github, Twitter, Instagram, Linkedin, Mail } from "lucide-react";
 import Link from "next/link";
 
-const formSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-});
-
 export function Footer() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-    },
-  });
-
-  const onSubmit = async ({ email }: z.infer<typeof formSchema>) => {
-    // In a real app, you'd send this to your API
-    console.log(`Subscribing email: ${email}`);
-    toast.success("Thanks for subscribing! Check your email to confirm.");
-    form.reset();
-  };
-
   return (
     <footer className="mt-auto border-t bg-muted/40">
       <div className="container max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid gap-12 sm:grid-cols-2 sm:gap-16">
+        <div className="flex flex-col items-center text-center space-y-8">
+          {/* Social Media Section */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-xl">Stay Connected</h3>
-            <p className="text-muted-foreground max-w-md">
-              Subscribe to our newsletter for updates on new projects and
-              articles.
-            </p>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="flex max-w-sm space-x-2"
-              >
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormControl>
-                        <Input
-                          placeholder="Enter your email"
-                          type="email"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit">Subscribe</Button>
-              </form>
-            </Form>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="font-semibold text-xl">Follow Me</h3>
-            <div className="flex flex-wrap gap-4">
+            <h3 className="font-bold text-xl tracking-tight">Follow Me</h3>
+            <div className="flex flex-wrap gap-4 justify-center">
               <Button variant="outline" size="icon" asChild>
                 <Link
                   href="https://twitter.com/username"
@@ -127,7 +66,7 @@ export function Footer() {
 
         <Separator className="my-8" />
 
-        <div className="text-center text-sm text-muted-foreground">
+        <div className="text-center text-sm text-muted-foreground font-medium">
           © {new Date().getFullYear()} Arun Nura. All rights reserved.
         </div>
       </div>

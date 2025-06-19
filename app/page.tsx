@@ -17,13 +17,13 @@ export default function Home() {
   return (
     <div className="flex flex-col gap-12 md:gap-16">
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-12 text-center">
-        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
+      <section className="flex flex-col items-center justify-center gap-6 py-12 md:py-16 text-center">
+        <h1 className="text-4xl font-black tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl leading-none">
           <span className="text-primary">
             {"<"}arun nura{">"}
           </span>
         </h1>
-        <p className="text-xl text-muted-foreground md:text-2xl">
+        <p className="text-xl text-muted-foreground md:text-2xl font-light tracking-wide">
           multi-disciplinary art practitioner
         </p>
       </section>
@@ -31,13 +31,13 @@ export default function Home() {
       {/* Featured Projects */}
       <section className="w-full">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
+          <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
             Featured Projects
           </h2>
           <Button variant="ghost" asChild>
             <Link
               href="/projects"
-              className="text-muted-foreground hover:text-primary"
+              className="text-muted-foreground hover:text-primary font-medium"
             >
               View all projects →
             </Link>
@@ -53,13 +53,13 @@ export default function Home() {
       {/* Featured Blog Posts */}
       <section className="w-full">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
+          <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
             Featured Posts
           </h2>
           <Button variant="ghost" asChild>
             <Link
               href="/blog"
-              className="text-muted-foreground hover:text-primary"
+              className="text-muted-foreground hover:text-primary font-medium"
             >
               View all posts →
             </Link>

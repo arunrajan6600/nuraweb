@@ -9,7 +9,7 @@ export default function ProjectsPage() {
   return (
     <div className="flex flex-col gap-8">
       <section>
-        <h1 className="text-3xl font-bold tracking-tight mb-8">Projects</h1>
+        <h1 className="text-4xl font-bold tracking-tight mb-8">Projects</h1>
         <div className="grid gap-8">
           {publishedPosts.map((post) => (
             <PostCard key={post.id} post={post} />

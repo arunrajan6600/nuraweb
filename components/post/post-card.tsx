@@ -33,11 +33,13 @@ export function PostCard({ post, variant = "default" }: PostCardProps) {
     <Card className="w-full transition-colors hover:bg-muted/50">
       <Link href={`/post/${post.id}`} className="block">
         <CardContent className="p-6 space-y-6">
-          <div className="space-y-2">
-            <CardTitle className="transition-colors hover:text-primary">
+          <div className="space-y-3">
+            <CardTitle className="transition-colors hover:text-primary text-xl font-bold leading-tight">
               {post.title}
             </CardTitle>
-            <p className="text-sm text-muted-foreground">{formattedDate}</p>
+            <p className="text-sm text-muted-foreground font-medium">
+              {formattedDate}
+            </p>
           </div>
 
           {post.thumbnail && (
@@ -48,13 +50,13 @@ export function PostCard({ post, variant = "default" }: PostCardProps) {
           )}
 
           {!isCompact && previewContent && (
-            <p className="text-muted-foreground line-clamp-3">
+            <p className="text-muted-foreground line-clamp-3 leading-relaxed">
               {previewContent}
             </p>
           )}
 
           <div className="flex items-center justify-end pt-2">
-            <Button variant="ghost" size="sm" className="group">
+            <Button variant="ghost" size="sm" className="group font-medium">
               Read more{" "}
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
