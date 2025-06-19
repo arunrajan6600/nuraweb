@@ -35,9 +35,9 @@ export default function RootLayout({
         className={`${lato.variable} ${robotoMono.variable} min-h-screen bg-background font-sans antialiased`}
       >
         <ThemeProvider>
-          <div className="relative min-h-screen flex flex-col">
+          <div className="relative min-h-screen flex flex-col z-10">
             <Header />
-            <main className="flex-1 w-full">
+            <main className="relative z-10 flex-1 w-full">
               <div className="container py-8 md:py-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 {children}
               </div>

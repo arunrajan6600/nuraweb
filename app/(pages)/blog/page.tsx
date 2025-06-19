@@ -7,10 +7,12 @@ export default function BlogPage() {
   );
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-12 md:gap-16">
       <section>
-        <h1 className="text-4xl font-bold tracking-tight mb-8">Blog</h1>
-        <div className="grid gap-6 max-w-3xl">
+        <h1 className="text-4xl font-bold tracking-tight mb-12 md:mb-16">
+          Blog
+        </h1>
+        <div className="grid gap-8 md:gap-10">
           {publishedPosts.map((post) => (
             <PostCard key={post.id} post={post} variant="compact" />
           ))}
