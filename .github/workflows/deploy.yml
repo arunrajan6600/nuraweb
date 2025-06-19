@@ -39,6 +39,7 @@ jobs:
       - name: Build with Next.js
         env:
           NEXT_PUBLIC_BASE_PATH: /nuraweb
+          NEXT_PUBLIC_DEFAULT_THEME: "dark"
         run: npm run build
 
       - name: Upload artifact
