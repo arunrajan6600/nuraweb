@@ -3,7 +3,7 @@
 import { Cell, ImageContent, Post, VideoContent } from "@/types/post";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { MarkdownEditor } from "@/components/editor/markdown-editor";
 import { useCallback, useEffect, useState } from "react";
 import {
   DndContext,
@@ -115,10 +116,9 @@ function CellEditor({ cell, onChange, onDelete }: CellEditorProps) {
       </div>
 
       {cell.type === "markdown" ? (
-        <Textarea
+        <MarkdownEditor
           value={cell.content as string}
-          onChange={(e) => handleContentChange(e.target.value)}
-          className="min-h-[200px] font-mono"
+          onChange={(value) => handleContentChange(value)}
         />
       ) : cell.type === "image" ? (
         <div className="space-y-4">

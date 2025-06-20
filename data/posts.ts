@@ -1,5 +1,11 @@
 import { Post } from "@/types/post";
 
+import {
+  cssExample,
+  javascriptExample,
+  typescriptExample,
+} from "./code-samples";
+
 export const posts: Post[] = [
   {
     title: "Digital Metamorphosis",
@@ -337,5 +343,106 @@ export const posts: Post[] = [
     id: "7",
     createdAt: "2025-06-18T09:30:00.000Z",
     updatedAt: "2025-06-19T14:22:45.000Z",
+  },
+  {
+    title: "Code Syntax Highlighting Demo",
+    thumbnail: {
+      url: "https://images.unsplash.com/photo-1555099962-4199c345e5dd",
+      alt: "Developer workspace with code on screens",
+    },
+    cells: [
+      {
+        id: "code1",
+        type: "markdown",
+        content:
+          "# Code Syntax Highlighting Demo\n\nThis post demonstrates code syntax highlighting for various programming languages. The code blocks should be properly highlighted with dark backgrounds and colored syntax.",
+      },
+      {
+        id: "code2",
+        type: "markdown",
+        content:
+          "## JavaScript Example\n\n```javascript\n" +
+          javascriptExample +
+          "\n```\n\nThe JavaScript code above demonstrates a simple shopping cart calculation function.",
+      },
+      {
+        id: "code3",
+        type: "markdown",
+        content:
+          "## CSS Example\n\n```css\n" +
+          cssExample +
+          "\n```\n\nThe CSS code above shows a basic grid layout with hover effects.",
+      },
+      {
+        id: "code4",
+        type: "markdown",
+        content:
+          "## TypeScript Example\n\n```typescript\n" +
+          typescriptExample +
+          "\n```\n\nThe TypeScript code above demonstrates typed interfaces and classes for a shopping cart implementation.",
+      },
+    ],
+    status: "published",
+    featured: true,
+    type: "blog",
+    id: "code-demo",
+    createdAt: "2025-06-20T08:30:00.000Z",
+    updatedAt: "2025-06-20T08:30:00.000Z",
+  },
+  {
+    title: "Advanced Markdown Guide for Web Developers",
+    thumbnail: {
+      url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97",
+      alt: "Laptop with code on screen",
+    },
+    cells: [
+      {
+        id: "md1",
+        type: "markdown",
+        content:
+          "# Advanced Markdown Guide for Web Developers\n\nMarkdown has become the standard for technical documentation and content creation in the web development world. This guide explores advanced markdown features you can use to enhance your documentation, blog posts, and README files.\n\n## Why Use Advanced Markdown?\n\nWhile basic markdown is sufficient for simple documentation, advanced features allow for:\n\n- Better content organization\n- Enhanced visual presentation\n- Improved code documentation\n- Interactive elements integration\n- Better accessibility",
+      },
+      {
+        id: "md2",
+        type: "markdown",
+        content:
+          "## Syntax Highlighting\n\n```javascript\n// This is a JavaScript function with proper syntax highlighting\nfunction calculateTotal(items) {\n  return items\n    .filter(item => item.price > 0)\n    .map(item => item.price * item.quantity)\n    .reduce((total, price) => total + price, 0);\n}\n\nconst cart = [\n  { name: 'Product 1', price: 10, quantity: 2 },\n  { name: 'Product 2', price: 5, quantity: 4 }\n];\n\nconsole.log(`Total: $${calculateTotal(cart)}`);\n```\n\n```css\n/* CSS with syntax highlighting */\n.container {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));\n  gap: 1rem;\n  padding: 2rem;\n  background-color: var(--bg-primary);\n}\n\n.card {\n  border-radius: 0.5rem;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n  transition: transform 0.3s ease;\n}\n\n.card:hover {\n  transform: translateY(-5px);\n}\n```",
+      },
+      {
+        id: "md3",
+        type: "markdown",
+        content:
+          "## Callout Boxes\n\n:::info\nThis is an information callout box! Use it for tips, notes, and additional information that might be helpful for the reader.\n:::\n\n:::warning\nThis is a warning callout box! Use it for important warnings, potential pitfalls, or things to be careful about.\n:::\n\n:::success\nThis is a success callout box! Use it to highlight successful approaches, best practices, or preferred solutions.\n:::",
+      },
+      {
+        id: "md4",
+        type: "image",
+        content: {
+          url: "https://images.unsplash.com/photo-1555099962-4199c345e5dd",
+          alt: "Developer workspace with code on screens",
+        },
+      },
+      {
+        id: "md5",
+        type: "markdown",
+        content:
+          "## Tables\n\n| Feature | Basic Markdown | Advanced Markdown |\n|---------|---------------|-------------------|\n| Headings | Yes | Yes |\n| Lists | Yes | Yes |\n| Code Blocks | Yes | Yes with syntax highlighting |\n| Images | Basic | Responsive with captions |\n| Links | Basic | Internal, external with previews |\n| Callouts | No | Yes with theming |\n| Tables | Basic | Extended formatting |\n\n## Links and References\n\nYou can create [inline links](https://example.com) very easily.\n\nInternal links to other pages in your site work great too, like [this link to the home page](/).\n\n## Footnotes\n\nYou can add footnotes to your markdown for citations or additional information[^1].\n\n[^1]: This is a footnote that appears at the bottom of the document.\n\n## Conclusion\n\nLeveling up your markdown skills can significantly improve your documentation and content. The advanced features we've explored make your content more engaging, readable, and professional.",
+      },
+      {
+        id: "md6",
+        type: "video",
+        content: {
+          url: "https://www.youtube.com/watch?v=HUBNt18RFbo",
+          title: "Learn Advanced Markdown in 12 Minutes",
+          provider: "youtube",
+        },
+      },
+    ],
+    status: "published",
+    featured: true,
+    type: "blog",
+    id: "8",
+    createdAt: "2025-06-19T11:45:00.000Z",
+    updatedAt: "2025-06-19T15:32:18.000Z",
   },
 ];
