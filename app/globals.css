@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./prism-dark.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -57,9 +58,17 @@
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
+  --muted-opacity-10: rgba(0, 0, 0, 0.03);
+  --muted-opacity-20: rgba(0, 0, 0, 0.06);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
+  --info: oklch(0.6 0.118 184.704);
+  --info-foreground: oklch(0.145 0 0);
+  --warning: oklch(0.769 0.188 70.08);
+  --warning-foreground: oklch(0.145 0 0);
+  --success: oklch(0.577 0.245 150);
+  --success-foreground: oklch(0.145 0 0);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
@@ -91,9 +100,17 @@
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
+  --muted-opacity-10: rgba(255, 255, 255, 0.03);
+  --muted-opacity-20: rgba(255, 255, 255, 0.06);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
+  --info: oklch(0.6 0.151 230);
+  --info-foreground: oklch(0.985 0 0);
+  --warning: oklch(0.85 0.188 70.08);
+  --warning-foreground: oklch(0.985 0 0);
+  --success: oklch(0.577 0.245 150);
+  --success-foreground: oklch(0.985 0 0);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
@@ -194,5 +211,138 @@
   .prose h2:first-child,
   .prose h3:first-child {
     margin-top: 0;
+  }
+
+  /* Better table styles */
+  .prose table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    margin: 2rem 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .prose table thead {
+    background-color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .prose table th {
+    font-weight: 600;
+    text-align: left;
+    padding: 0.75rem 1rem;
+  }
+
+  .prose table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .prose table tr:nth-child(even) {
+    background-color: var(--muted-opacity-10);
+  }
+
+  .prose table tr:hover {
+    background-color: var(--muted-opacity-20);
+  }
+
+  /* Better list styles */
+  .prose ul,
+  .prose ol {
+    padding-left: 1.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .prose li {
+    margin-bottom: 0.5rem;
+    position: relative;
+  }
+
+  .prose li > ul,
+  .prose li > ol {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .prose ul > li::marker {
+    color: var(--primary);
+  }
+
+  .prose ol > li::marker {
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  /* Code block styles */
+  .prose pre {
+    padding: 1.25rem 1.5rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    background-color: #0a0a0a !important; /* Dark background like in the screenshot */
+    margin: 1.5rem 0;
+    border: none;
+  }
+
+  .prose pre code {
+    color: #e6e6e6 !important; /* Light text color for code */
+    font-family: var(--font-mono) !important;
+    font-size: 0.85rem !important;
+    font-weight: 400 !important;
+    line-height: 1.7 !important;
+  }
+
+  /* Syntax highlighting colors - manually setting these to match screenshot */
+  .prose pre code .token.comment {
+    color: #6a9955 !important; /* Green for comments */
+  }
+
+  .prose pre code .token.keyword,
+  .prose pre code .token.operator {
+    color: #569cd6 !important; /* Blue for keywords */
+  }
+
+  .prose pre code .token.string {
+    color: #ce9178 !important; /* Orange for strings */
+  }
+
+  .prose pre code .token.function {
+    color: #dcdcaa !important; /* Yellow for functions */
+  }
+
+  .prose pre code .token.number {
+    color: #b5cea8 !important; /* Light green for numbers */
+  }
+
+  /* Heading style for code block headers */
+  .prose h2:has(+ pre) {
+    margin-bottom: 0.75rem;
+  }
+
+  .prose code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    font-weight: 400;
+    color: #e6e6e6; /* Light color for code text */
+  }
+
+  .prose :not(pre) > code {
+    background-color: rgba(
+      255,
+      255,
+      255,
+      0.1
+    ); /* Subtle background for inline code */
+    padding: 0.2em 0.4em;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+  }
+
+  /* Syntax highlighting headers */
+  .prose h2 + pre {
+    margin-top: 1rem;
   }
 }
