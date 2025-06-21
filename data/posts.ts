@@ -106,46 +106,26 @@ export const posts: Post[] = [
     updatedAt: "2025-06-17T14:22:31.442Z",
   },
   {
-    title: "The Intersection of Art and Technology in the Age of AI",
-    thumbnail: {
-      url: "https://images.unsplash.com/photo-1647427060118-4911c9821b82",
-      alt: "AI-generated artwork display thumbnail",
-    },
-    cells: [
-      {
-        id: "1",
-        type: "markdown",
-        content:
-          "# The Evolution of Artistic Practice in the Digital Age\n\nIn recent years, we've witnessed an unprecedented convergence of art and technology. This fusion has not only expanded the possibilities for creative expression but has also challenged our traditional understanding of what constitutes art.\n\n## Digital Tools as Creative Mediums\n\nThe emergence of AI, generative algorithms, and interactive installations has transformed the artistic landscape. These tools aren't merely aids to creation; they've become mediums in their own right, capable of producing works that question the nature of creativity and authorship.",
-      },
-      {
-        id: "2",
-        type: "image",
-        content: {
-          url: "https://images.unsplash.com/photo-1647427060118-4911c9821b82",
-          alt: "AI-generated artwork display",
-        },
-      },
-      {
-        id: "3",
-        type: "markdown",
-        content:
-          "## The Role of the Artist\n\nIn this new paradigm, the artist's role has evolved significantly:\n\n1. **System Design**: Artists now often create systems that generate art, rather than individual pieces\n2. **Data Curation**: Selecting and shaping the data that feeds creative algorithms\n3. **Interface Creation**: Designing how audiences interact with digital artworks\n4. **Conceptual Framework**: Providing context and meaning for technology-enabled experiences\n\n## Ethical Considerations\n\nAs we embrace these new possibilities, important questions arise:\n\n- Who owns AI-generated artwork?\n- How do we preserve digital art?\n- What constitutes originality in the age of algorithmic creation?\n- How do we maintain human agency in automated creative processes?",
-      },
-      {
-        id: "4",
-        type: "markdown",
-        content:
-          "## Looking Forward\n\nThe future of art lies not in choosing between traditional and digital methods, but in finding meaningful ways to combine them. We're entering an era where:\n\n- Physical and digital realms blur\n- Interaction becomes a fundamental artistic element\n- Algorithms become collaborators rather than tools\n- Art responds and adapts in real-time\n\nThis evolution doesn't diminish the value of traditional artistic skills—rather, it adds new dimensions to what's possible in creative expression.",
-      },
-    ],
-    status: "published",
-    featured: true,
-    type: "blog",
-    id: "3",
-    createdAt: "2025-06-15T09:00:00.000Z",
-    updatedAt: "2025-06-18T11:45:22.331Z",
+    
+  "title": "ഹത്യ",
+  "thumbnail": {
+    "url": "",
+    "alt": ""
   },
+  "cells": [
+    {
+      "id": "1",
+      "type": "markdown",
+      "content": "അവൾ ജയിലിലെ ഇരുമ്പഴികൾക്കിടയിലൂടെ അവന്റെ വിരലുകളിൽ പിടിച്ചു മരിച്ച ഈറനണിഞ്ഞ കണ്ണുകളോടെ അവന്റെ മുഖത്തേക്ക് നോക്കി നിന്നു.\n\nപെട്ടെന്ന് എന്തോ ഓർത്ത് അവൻ പറഞ്ഞു \n\nഅയാൾ എനിക്ക്   \"ഒരു മരത്തിൽ കൂടിയിരിക്കും പറവൈ\" എന്ന പാട്ട് അയച്ചു തന്നു.\n\nഅവൾ ഞെട്ടിത്തരിച്ചു വായ കൈകൾ കൊണ്ട് പൊതി. കണ്ണുകളിൽ ഭയം തിളങ്ങി.\n\n\"സൗന്ദർരാജൻ -രാജേശ്വരി യോ അതോ പി സുശീലയോ ?\" വിക്കി വിക്കി അവൾ ചോദിച്ചു \n\nഅവളുടെ ഭാവമാറ്റം കണ്ടപ്പോൾ അവനും പകച്ചു.\n\n\"സൗന്ദർരാജൻ -രാജേശ്വരി\"\n\n\"ദൈവമേ...!!!\" - എങ്ങും ഭയം മാത്രം \n\n\n\n(തുടരും...)\n\n"
+    }
+  ],
+  "status": "published",
+  "featured": true,
+  "type": "blog",
+  "id": "3",
+  "createdAt": "2025-06-15T09:00:00.000Z",
+  "updatedAt": "2025-06-18T11:45:22.331Z"
+},
   {
     title: "Memory Fragments: Digital Nostalgia",
     thumbnail: {
