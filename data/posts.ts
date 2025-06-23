@@ -8,54 +8,43 @@ import {
 
 export const posts: Post[] = [
   {
-    title: "Digital Metamorphosis",
-    thumbnail: {
-      url: "https://images.unsplash.com/photo-1468164016595-6108e4c60c8b",
-      alt: "Abstract digital art installation thumbnail",
-    },
-    cells: [
-      {
-        id: "1",
-        type: "markdown",
-        content:
-          "# Digital Metamorphosis: An Interactive Journey\n\nAn exploration of digital transformation through generative art. This installation uses real-time data to create evolving visual patterns that reflect our changing digital landscape.\n\nThe project emerged from a fascination with how digital systems can mirror biological processes of growth and transformation. Each visual element responds to multiple data streams, creating a complex ecosystem of interdependent patterns.",
-      },
-      {
-        id: "2",
-        type: "image",
-        content: {
-          url: "https://images.unsplash.com/photo-1468164016595-6108e4c60c8b",
-          alt: "Abstract digital art installation showing flowing patterns of light",
-        },
-      },
-      {
-        id: "3",
-        type: "markdown",
-        content:
-          "## Technical Implementation\n\nThe installation utilizes a combination of technologies:\n\n- Real-time data processing using custom algorithms\n- Motion sensors for visitor interaction\n- Projection mapping for seamless integration with physical spaces\n- Machine learning models for pattern generation\n\n## Visitor Interaction\n\nThe installation responds to visitor movement and ambient sound, creating a dynamic interplay between physical presence and digital representation. As people move through the space, their movements trigger ripples of transformation across the projected surfaces.",
-      },
-      {
-        id: "4",
-        type: "image",
-        content: {
-          url: "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead",
-          alt: "Visitors interacting with the digital installation",
-        },
-      },
-      {
-        id: "5",
-        type: "markdown",
-        content:
-          "## Impact and Reflection\n\nThis work challenges our perception of the boundary between digital and physical spaces. By creating an environment that responds to human presence, it questions the traditional notion of art as a static medium.\n\nThe metamorphosis isn't just in the visual patterns—it's in how we understand our relationship with digital spaces and our role in shaping them.",
-      },
-    ],
-    status: "published",
-    featured: true,
-    type: "project",
-    id: "1",
-    createdAt: "2025-06-01T10:00:00.000Z",
-    updatedAt: "2025-06-18T07:11:08.213Z",
+  "title": "Bhasha Naishadha Ambu / ഭാഷാ നൈഷധ അമ്പു",
+  "thumbnail": {
+    "url": "/media/nura/FILES/website_nuraweb_Files/public/images/projects/bhashanaishadham_ambu/bhashanaishadhaambu_screenshot.jpg",
+    "alt": "Abstract digital art installation thumbnail"
   },
+  "cells": [
+    {
+      "id": "1",
+      "type": "markdown",
+      "content": "Bhasha Naishadha Ambu is an experiment to find and manipulate the numerical data from a vector embedding AI model and compare the vector values with the positions of 3D points from a masked video of Ambu (the child). Then the words corresponding to the positional values from video is selected and superimposed over the video. The fundamental intention of this experiment is to explore how language, pixels, vectors are all interconnected in a world of pseudo-futurism which might transformed to a \"future\". \n*Italic text*Video Credits: Rajesh Karthy, Dr. Jaseera Majid"
+    },
+    {
+      "id": "2",
+      "type": "video",
+      "content": {
+        "url": "https://youtu.be/CxX3SFSz3RQ",
+        "title": "bhasha naishadha ambu",
+        "provider": "youtube"
+      }
+    },
+    {
+      "id": "4",
+      "type": "video",
+      "content": {
+        "url": "https://youtu.be/IAmrl1hbgPE",
+        "title": "interactive",
+        "provider": "youtube"
+      }
+    }
+  ],
+  "status": "published",
+  "featured": true,
+  "type": "project",
+  "id": "1",
+  "createdAt": "2025-06-01T10:00:00.000Z",
+  "updatedAt": "2025-06-18T07:11:08.213Z"
+},
   {
     title: "Urban Echoes: Sonic Cartography",
     thumbnail: {
