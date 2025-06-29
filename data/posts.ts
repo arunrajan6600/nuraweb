@@ -9,10 +9,10 @@ import {
 export const posts: Post[] = [
   {
   "title": "Bhasha Naishadha Ambu / ഭാഷാ നൈഷധ അമ്പു",
-  "thumbnail": {
-    "url": "/media/nura/FILES/website_nuraweb_Files/public/images/projects/bhashanaishadham_ambu/bhashanaishadhaambu_screenshot.jpg",
-    "alt": "Abstract digital art installation thumbnail"
-  },
+  // "thumbnail": {
+  //   "url": "/media/nura/FILES/website_nuraweb_Files/public/images/projects/bhashanaishadham_ambu/bhashanaishadhaambu_screenshot.jpg",
+  //   "alt": "Abstract digital art installation thumbnail"
+  // },
   "cells": [
     {
       "id": "1",
@@ -47,10 +47,10 @@ export const posts: Post[] = [
 },
   {
     title: "Urban Echoes: Sonic Cartography",
-    thumbnail: {
-      url: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df",
-      alt: "Cityscape at night thumbnail",
-    },
+    // thumbnail: {
+    //   url: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df",
+    //   alt: "Cityscape at night thumbnail",
+    // },
     cells: [
       {
         id: "1",
@@ -97,10 +97,10 @@ export const posts: Post[] = [
   {
     
   "title": "ഹത്യ",
-  "thumbnail": {
-    "url": "",
-    "alt": ""
-  },
+  // "thumbnail": {
+  //   "url": "",
+  //   "alt": ""
+  // },
   "cells": [
     {
       "id": "1",
@@ -117,10 +117,10 @@ export const posts: Post[] = [
 },
   {
     title: "Memory Fragments: Digital Nostalgia",
-    thumbnail: {
-      url: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e",
-      alt: "Abstract memory fragments installation thumbnail",
-    },
+    // thumbnail: {
+    //   url: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e",
+    //   alt: "Abstract memory fragments installation thumbnail",
+    // },
     cells: [
       {
         id: "1",
@@ -166,10 +166,10 @@ export const posts: Post[] = [
   },
   {
     title: "Reflections on Interactive Art: Breaking the Fourth Wall",
-    thumbnail: {
-      url: "https://images.unsplash.com/photo-1573455494060-c5595004fb6c",
-      alt: "Interactive art installation with visitors thumbnail",
-    },
+    // thumbnail: {
+    //   url: "https://images.unsplash.com/photo-1573455494060-c5595004fb6c",
+    //   alt: "Interactive art installation with visitors thumbnail",
+    // },
     cells: [
       {
         id: "1",
@@ -207,10 +207,10 @@ export const posts: Post[] = [
   },
   {
     title: "Data Sculptures: Materializing Information",
-    thumbnail: {
-      url: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4",
-      alt: "3D printed data sculpture installation thumbnail",
-    },
+    // thumbnail: {
+    //   url: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4",
+    //   alt: "3D printed data sculpture installation thumbnail",
+    // },
     cells: [
       {
         id: "1",
@@ -256,10 +256,10 @@ export const posts: Post[] = [
   },
   {
     title: "Creating Interactive Web Experiences with Three.js",
-    thumbnail: {
-      url: "https://images.unsplash.com/photo-1558655146-9f40138edfeb",
-      alt: "Abstract 3D rendering of geometric shapes",
-    },
+    // thumbnail: {
+    //   url: "https://images.unsplash.com/photo-1558655146-9f40138edfeb",
+    //   alt: "Abstract 3D rendering of geometric shapes",
+    // },
     cells: [
       {
         id: "v1",
@@ -315,10 +315,10 @@ export const posts: Post[] = [
   },
   {
     title: "Code Syntax Highlighting Demo",
-    thumbnail: {
-      url: "https://images.unsplash.com/photo-1555099962-4199c345e5dd",
-      alt: "Developer workspace with code on screens",
-    },
+    // thumbnail: {
+    //   url: "https://images.unsplash.com/photo-1555099962-4199c345e5dd",
+    //   alt: "Developer workspace with code on screens",
+    // },
     cells: [
       {
         id: "code1",
@@ -360,10 +360,10 @@ export const posts: Post[] = [
   },
   {
     title: "Advanced Markdown Guide for Web Developers",
-    thumbnail: {
-      url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97",
-      alt: "Laptop with code on screen",
-    },
+    // thumbnail: {
+    //   url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97",
+    //   alt: "Laptop with code on screen",
+    // },
     cells: [
       {
         id: "md1",
