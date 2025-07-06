@@ -23,7 +23,10 @@ function getPreviewContent(post: Post) {
   return words.slice(0, 50).join(" ") + (words.length > 50 ? "..." : "");
 }
 
-export function ProjectPostCard({ post, variant = "default" }: ProjectPostCardProps) {
+export function ProjectPostCard({
+  post,
+  variant = "default",
+}: ProjectPostCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const isHovering = useRef(false);
   const formattedDate = formatDistance(new Date(post.updatedAt), new Date(), {
@@ -169,18 +172,28 @@ export function ProjectPostCard({ post, variant = "default" }: ProjectPostCardPr
       className="w-full transition-all duration-500 hover:shadow-md dark:hover:shadow-primary/5 hover:scale-[1.005] transform-gpu"
     >
       <Link href={`/post/${post.id}`} className="block">
-        <CardContent className="p-8 md:p-10 flex flex-col h-full min-h-[300px]">
-          <div className="space-y-4">
-            <CardTitle className="transition-colors hover:text-primary text-xl font-bold leading-tight">
-              {post.title}
-            </CardTitle>
-            <p className="text-sm text-muted-foreground font-medium">
-              {formattedDate}
-            </p>
+        <CardContent className="px-4 py-3 md:px-5 md:py-4 flex flex-col h-full min-h-[200px]">
+          <div className="flex items-start justify-between gap-3 mb-1">
+            <div className="space-y-1 flex-1">
+              <CardTitle className="transition-colors hover:text-primary text-xl font-bold leading-tight">
+                {post.title}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground font-medium">
+                {formattedDate}
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="group font-medium flex-shrink-0"
+            >
+              Read more{" "}
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
           </div>
 
           {post.thumbnail && (
-            <div className="mt-6 flex-shrink-0">
+            <div className="mt-3 flex-shrink-0">
               <ThumbnailCell
                 content={post.thumbnail}
                 className={isCompact ? "h-48" : "h-64 md:h-72"}
@@ -189,19 +202,12 @@ export function ProjectPostCard({ post, variant = "default" }: ProjectPostCardPr
           )}
 
           {!isCompact && previewContent && (
-            <div className={post.thumbnail ? "mt-6" : "mt-4"}>
+            <div className={post.thumbnail ? "mt-3" : "mt-1"}>
               <p className="text-muted-foreground line-clamp-3 leading-relaxed">
                 {previewContent}
               </p>
             </div>
           )}
-
-          <div className="flex items-center justify-end mt-auto pt-6">
-            <Button variant="ghost" size="sm" className="group font-medium">
-              Read more{" "}
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Button>
-          </div>
         </CardContent>
       </Link>
     </Card>
