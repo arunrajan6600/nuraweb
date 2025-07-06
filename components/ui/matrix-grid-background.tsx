@@ -6,10 +6,16 @@ import * as THREE from "three";
 
 interface MatrixGridBackgroundProps {
   className?: string;
+  enableWaveAnimation?: boolean;
+  enableMouseHoverAnimation?: boolean;
+  enableCardBorderAnimation?: boolean;
 }
 
 export default function MatrixGridBackground({
   className = "",
+  enableWaveAnimation = true,
+  enableMouseHoverAnimation = true,
+  enableCardBorderAnimation = true,
 }: MatrixGridBackgroundProps) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [hoveredCardBounds, setHoveredCardBounds] = useState<{
@@ -83,6 +89,9 @@ export default function MatrixGridBackground({
         <MatrixShader
           mousePosition={mousePosition}
           hoveredCardBounds={hoveredCardBounds}
+          enableWaveAnimation={enableWaveAnimation}
+          enableMouseHoverAnimation={enableMouseHoverAnimation}
+          enableCardBorderAnimation={enableCardBorderAnimation}
         />
       </Canvas>
     </div>
@@ -92,6 +101,9 @@ export default function MatrixGridBackground({
 function MatrixShader({
   mousePosition,
   hoveredCardBounds,
+  enableWaveAnimation,
+  enableMouseHoverAnimation,
+  enableCardBorderAnimation,
 }: {
   mousePosition: { x: number; y: number };
   hoveredCardBounds: {
@@ -102,6 +114,9 @@ function MatrixShader({
     width: number;
     height: number;
   } | null;
+  enableWaveAnimation: boolean;
+  enableMouseHoverAnimation: boolean;
+  enableCardBorderAnimation: boolean;
 }) {
   const { viewport, size, camera } = useThree();
   const meshRef = useRef<THREE.Mesh>(null);
@@ -110,44 +125,8 @@ function MatrixShader({
   const lastHoveredCell = useRef({ x: -1, y: -1 });
   const raycaster = useRef(new THREE.Raycaster());
   const mouse3D = useRef(new THREE.Vector2());
-  const isMouseOverCanvas = useRef(true);
   const hoverEndTime = useRef(-1); // Time when hover ended
   const hoverDelay = 1.2; // Delay in seconds before glow fades out
-
-  // Set up event listeners for mouse enter/leave
-  useEffect(() => {
-    const handleMouseLeave = () => {
-      isMouseOverCanvas.current = false;
-      // Start the hover end timer when mouse leaves canvas
-      hoverEndTime.current = time.current;
-    };
-
-    const handleMouseEnter = () => {
-      isMouseOverCanvas.current = true;
-      // Reset hover end time when mouse enters canvas
-      hoverEndTime.current = -1;
-    };
-
-    // Add event listeners to the canvas container
-    const canvas = document.querySelector("canvas");
-    if (canvas) {
-      canvas.parentElement?.addEventListener("mouseleave", handleMouseLeave);
-      canvas.parentElement?.addEventListener("mouseenter", handleMouseEnter);
-    }
-
-    return () => {
-      if (canvas) {
-        canvas.parentElement?.removeEventListener(
-          "mouseleave",
-          handleMouseLeave
-        );
-        canvas.parentElement?.removeEventListener(
-          "mouseenter",
-          handleMouseEnter
-        );
-      }
-    };
-  }, []);
 
   // Update shader uniforms on each frame
   useFrame((_, delta) => {
@@ -161,6 +140,14 @@ function MatrixShader({
       size.width,
       size.height
     );
+
+    // Update animation control uniforms
+    materialRef.current.uniforms.u_enableWaveAnimation.value =
+      enableWaveAnimation ? 1.0 : 0.0;
+    materialRef.current.uniforms.u_enableMouseHoverAnimation.value =
+      enableMouseHoverAnimation ? 1.0 : 0.0;
+    materialRef.current.uniforms.u_enableCardBorderAnimation.value =
+      enableCardBorderAnimation ? 1.0 : 0.0;
 
     // Update card bounds uniform
     if (hoveredCardBounds) {
@@ -208,52 +195,47 @@ function MatrixShader({
     materialRef.current.uniforms.u_hoverEndTime.value = timeSinceHoverEnded;
     materialRef.current.uniforms.u_hoverDelay.value = hoverDelay;
 
-    // Only update hover state if mouse is over canvas
-    if (isMouseOverCanvas.current) {
-      // Reset hover end time when mouse is moving over canvas
-      hoverEndTime.current = -1;
+    // Always update hover state based on global mouse position
+    // Convert mouse position to normalized device coordinates (-1 to +1)
+    mouse3D.current.x = (mousePosition.x / size.width) * 2 - 1;
+    mouse3D.current.y = -(mousePosition.y / size.height) * 2 + 1;
 
-      // Convert mouse position to normalized device coordinates (-1 to +1)
-      mouse3D.current.x = (mousePosition.x / size.width) * 2 - 1;
-      mouse3D.current.y = -(mousePosition.y / size.height) * 2 + 1;
+    // Set up raycaster
+    raycaster.current.setFromCamera(mouse3D.current, camera);
 
-      // Set up raycaster
-      raycaster.current.setFromCamera(mouse3D.current, camera);
+    // Perform raycasting
+    const intersects = raycaster.current.intersectObject(meshRef.current);
 
-      // Perform raycasting
-      const intersects = raycaster.current.intersectObject(meshRef.current);
+    if (intersects.length > 0) {
+      // Get intersection point in UV coordinates
+      const uv = intersects[0].uv;
 
-      if (intersects.length > 0) {
-        // Get intersection point in UV coordinates
-        const uv = intersects[0].uv;
+      // Get grid size from uniforms
+      const gridSize = materialRef.current.uniforms.u_gridSize.value;
 
-        // Get grid size from uniforms
-        const gridSize = materialRef.current.uniforms.u_gridSize.value;
+      // Calculate aspect ratio to maintain square cells
+      const aspectRatio = size.width / size.height;
+      const adjustedGridSize = new THREE.Vector2(gridSize.x, gridSize.y);
 
-        // Calculate aspect ratio to maintain square cells
-        const aspectRatio = size.width / size.height;
-        const adjustedGridSize = new THREE.Vector2(gridSize.x, gridSize.y);
+      if (aspectRatio > 1.0) {
+        // Landscape orientation
+        adjustedGridSize.x = Math.floor(gridSize.y * aspectRatio);
+      } else {
+        // Portrait orientation
+        adjustedGridSize.y = Math.floor(gridSize.x / aspectRatio);
+      }
 
-        if (aspectRatio > 1.0) {
-          // Landscape orientation
-          adjustedGridSize.x = Math.floor(gridSize.y * aspectRatio);
-        } else {
-          // Portrait orientation
-          adjustedGridSize.y = Math.floor(gridSize.x / aspectRatio);
-        }
+      // Calculate which cell is being hovered using the UV coordinates
+      const cellX = Math.floor(uv!.x * adjustedGridSize.x);
+      const cellY = Math.floor(uv!.y * adjustedGridSize.y);
 
-        // Calculate which cell is being hovered using the UV coordinates
-        const cellX = Math.floor(uv!.x * adjustedGridSize.x);
-        const cellY = Math.floor(uv!.y * adjustedGridSize.y);
-
-        // Only update if the hovered cell has changed
-        if (
-          cellX !== lastHoveredCell.current.x ||
-          cellY !== lastHoveredCell.current.y
-        ) {
-          materialRef.current.uniforms.u_hoveredCell.value.set(cellX, cellY);
-          lastHoveredCell.current = { x: cellX, y: cellY };
-        }
+      // Only update if the hovered cell has changed
+      if (
+        cellX !== lastHoveredCell.current.x ||
+        cellY !== lastHoveredCell.current.y
+      ) {
+        materialRef.current.uniforms.u_hoveredCell.value.set(cellX, cellY);
+        lastHoveredCell.current = { x: cellX, y: cellY };
       }
     }
   });
@@ -279,6 +261,9 @@ function MatrixShader({
       uniform float u_headerHeight;
       uniform vec4 u_cardBounds;
       uniform float u_hasHoveredCard;
+      uniform float u_enableWaveAnimation;
+      uniform float u_enableMouseHoverAnimation;
+      uniform float u_enableCardBorderAnimation;
       
       varying vec2 vUv;
       
@@ -410,21 +395,27 @@ function MatrixShader({
         // Calculate header fade effect
         float headerFade = calculateHeaderFade(vUv, u_resolution, u_headerHeight);
         
-        // Calculate animated bleeding borders from top
-        float bleedingBorder = animatedBorderBleeding(cellIndex, u_time, adjustedGridSize);
+        // Calculate animated bleeding borders from top (conditional)
+        float bleedingBorder = 0.0;
+        if (u_enableWaveAnimation > 0.5) {
+          bleedingBorder = animatedBorderBleeding(cellIndex, u_time, adjustedGridSize);
+        }
         
-        // Calculate card border effect if a card is hovered
+        // Calculate card border effect if a card is hovered (conditional)
         float cardBorderEffect = 0.0;
-        if (u_hasHoveredCard > 0.5) {
+        if (u_enableCardBorderAnimation > 0.5 && u_hasHoveredCard > 0.5) {
           cardBorderEffect = calculateCardBorderEffect(vUv, u_cardBounds, u_time);
         }
         
-        // Base color for all squares (subtle grayscale with bleeding effect)
+        // Base color for all squares (subtle grayscale with conditional bleeding effect)
         vec3 baseColor = vec3(0.08) * squareBorder;
         vec3 bleedingColor = vec3(0.15 + bleedingBorder * 0.3) * squareBorder;
         
-        // Blend base and bleeding colors, applying header fade
-        vec3 color = mix(baseColor, bleedingColor, bleedingBorder) * headerFade;
+        // Blend base and bleeding colors, applying header fade (only if wave animation enabled)
+        vec3 color = baseColor * headerFade;
+        if (u_enableWaveAnimation > 0.5) {
+          color = mix(baseColor, bleedingColor, bleedingBorder) * headerFade;
+        }
         
         // Calculate which cell is being hovered
         vec2 currentCell = cellIndex;
@@ -442,8 +433,8 @@ function MatrixShader({
           fadeFactor = 1.0 - smoothstep(0.0, u_hoverDelay, u_hoverEndTime);
         }
         
-        // RGB glow effect for hovered and nearby cells
-        if (isAnyHovered && dist < 4.0) {
+        // RGB glow effect for hovered and nearby cells (conditional)
+        if (u_enableMouseHoverAnimation > 0.5 && isAnyHovered && dist < 4.0) {
           // Calculate glow intensity based on distance
           float glowIntensity = 1.0 - (dist / 4.0);
           glowIntensity = pow(glowIntensity, 1.5); // Adjusted falloff for more spread
@@ -491,11 +482,13 @@ function MatrixShader({
         float ambientPulse = 0.02 + 0.02 * sin(u_time + cellIndex.x * 0.2 + cellIndex.y * 0.3);
         color += vec3(0.03, 0.03, 0.03) * squareBorder * ambientPulse * headerFade;
         
-        // Add extra bleeding effect intensity at the top
-        color += vec3(0.05, 0.05, 0.05) * squareBorder * bleedingBorder * headerFade;
+        // Add extra bleeding effect intensity at the top (conditional)
+        if (u_enableWaveAnimation > 0.5) {
+          color += vec3(0.05, 0.05, 0.05) * squareBorder * bleedingBorder * headerFade;
+        }
         
-        // Add card border glow effect
-        if (u_hasHoveredCard > 0.5 && cardBorderEffect > 0.1) {
+        // Add card border glow effect (conditional)
+        if (u_enableCardBorderAnimation > 0.5 && u_hasHoveredCard > 0.5 && cardBorderEffect > 0.1) {
           vec3 cardGlowColor = vec3(0.6, 0.6, 0.65); // Very subtle blue-tinted white
           color += cardGlowColor * cardBorderEffect * 0.15 * squareBorder * headerFade;
           color += cardGlowColor * cardBorderEffect * 0.08 * squareFilled * headerFade;
@@ -515,6 +508,13 @@ function MatrixShader({
       u_headerHeight: { value: 64 }, // Header height in pixels (16 * 4 = 64px)
       u_cardBounds: { value: new THREE.Vector4(0, 0, 0, 0) }, // left, top, right, bottom (normalized)
       u_hasHoveredCard: { value: 0.0 }, // 1.0 if a card is hovered, 0.0 otherwise
+      u_enableWaveAnimation: { value: enableWaveAnimation ? 1.0 : 0.0 }, // Toggle wave animation
+      u_enableMouseHoverAnimation: {
+        value: enableMouseHoverAnimation ? 1.0 : 0.0,
+      }, // Toggle mouse hover effects
+      u_enableCardBorderAnimation: {
+        value: enableCardBorderAnimation ? 1.0 : 0.0,
+      }, // Toggle card border effects
     },
   });
 
