@@ -18,7 +18,12 @@ export default function Home() {
   return (
     <>
       {/* Full-screen Matrix Grid Background - only visible in dark mode */}
-      <MatrixGridBackground className="dark:block hidden" />
+      <MatrixGridBackground
+        className="dark:block hidden"
+        enableWaveAnimation={false}
+        enableMouseHoverAnimation={true}
+        enableCardBorderAnimation={false}
+      />
 
       {/* Content */}
       <div className="flex flex-col gap-20 md:gap-28 lg:gap-32">
