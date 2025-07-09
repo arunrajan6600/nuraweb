@@ -1,0 +1,34 @@
+{
+  "title": "Bhasha Naishadha Ambu / ഭാഷാ നൈഷധ അമ്പു",
+  "cells": [
+    {
+      "id": "1",
+      "type": "markdown",
+      "content": "Bhasha Naishadha Ambu is an experiment to find and manipulate the numerical data from a vector embedding AI model and compare the vector values with the positions of 3D points from a masked video of Ambu (the child). Then the words corresponding to the positional values from video is selected and superimposed over the video. The fundamental intention of this experiment is to explore how language, pixels, vectors are all interconnected in a world of pseudo-futurism which might transformed to a \"future\". \n*Italic text*Video Credits: Rajesh Karthy, Dr. Jaseera Majid"
+    },
+    {
+      "id": "2",
+      "type": "video",
+      "content": {
+        "url": "https://youtu.be/CxX3SFSz3RQ",
+        "title": "bhasha naishadha ambu",
+        "provider": "youtube"
+      }
+    },
+    {
+      "id": "4",
+      "type": "video",
+      "content": {
+        "url": "https://youtu.be/IAmrl1hbgPE",
+        "title": "interactive",
+        "provider": "youtube"
+      }
+    }
+  ],
+  "status": "published",
+  "featured": true,
+  "type": "project",
+  "id": "1",
+  "createdAt": "2025-06-01T10:00:00.000Z",
+  "updatedAt": "2025-06-18T07:11:08.213Z"
+}

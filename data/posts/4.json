@@ -1,0 +1,42 @@
+{
+  "title": "Memory Fragments: Digital Nostalgia",
+  "cells": [
+    {
+      "id": "1",
+      "type": "markdown",
+      "content": "# Memory Fragments: Exploring Digital Distortion\n\nA mixed-media installation that investigates how digital technologies affect our experience and retention of memories. Through a combination of projection mapping, interactive elements, and AI-generated imagery, the work creates a space where memories become tangible yet elusive."
+    },
+    {
+      "id": "2",
+      "type": "image",
+      "content": {
+        "url": "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e",
+        "alt": "Abstract memory fragments installation"
+      }
+    },
+    {
+      "id": "3",
+      "type": "markdown",
+      "content": "## Concept and Development\n\nThe installation explores several key themes:\n\n1. **Digital Decay**: How digital storage affects memory degradation\n2. **Algorithmic Reconstruction**: Using AI to fill in memory gaps\n3. **Collective Memory**: Sharing and merging personal recollections\n4. **Temporal Distortion**: How technology changes our perception of time\n\n## Technical Implementation\n\nThe work combines various technologies to create its effects:\n\n- Neural networks trained on personal photos\n- Real-time video processing\n- Interactive touch surfaces\n- Generative audio elements"
+    },
+    {
+      "id": "4",
+      "type": "image",
+      "content": {
+        "url": "https://images.unsplash.com/photo-1633511090690-0b7b450b3bcb",
+        "alt": "Digital memory visualization detail"
+      }
+    },
+    {
+      "id": "5",
+      "type": "markdown",
+      "content": "## Visitor Experience\n\nVisitors contribute their own memories through a digital interface, which are then processed and integrated into the installation. These contributions create an ever-evolving tapestry of collective memory, blurring the lines between individual and shared experiences.\n\n## Impact\n\nThe project raises questions about:\n\n- The reliability of digital archives\n- The nature of memory in the digital age\n- The role of AI in preserving and reconstructing memories\n- The future of personal and collective remembrance"
+    }
+  ],
+  "status": "published",
+  "featured": false,
+  "type": "project",
+  "id": "4",
+  "createdAt": "2025-04-20T15:30:00.000Z",
+  "updatedAt": "2025-06-16T09:12:44.123Z"
+}

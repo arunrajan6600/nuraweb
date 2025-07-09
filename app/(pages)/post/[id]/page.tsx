@@ -1,32 +1,26 @@
 import { notFound } from "next/navigation";
-import { posts } from "@/data/posts";
+import { getPostById, getAllPosts } from "@/lib/posts";
 import { PostCell } from "@/components/post/post-cell";
 import { formatDistance } from "date-fns";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Metadata } from "next";
+import { Post } from "@/types/post";
 
 interface Props {
-  params: Promise<{ id: string }>;
-}
-
-type Post = (typeof posts)[number];
-
-function getPost(id: string): Post | undefined {
-  return posts.find((p) => p.id === id);
+  params: { id: string };
 }
 
 // Validate and transform params to ensure they're sanitized
-function validateAndParseId(rawId: unknown) {
-  return typeof rawId === "string" ? rawId : "";
+async function getPost(id: string): Promise<Post | null> {
+  return getPostById(id);
 }
 
 // Generate metadata for the page
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const resolvedId = validateAndParseId(id);
-  const post = getPost(resolvedId);
+  const { id } = params;
+  const post = await getPost(id);
 
   if (!post) {
     return {
@@ -40,8 +34,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 // Generate static params for all published posts
-export function generateStaticParams() {
-  return posts
+export async function generateStaticParams() {
+  const allPosts = await getAllPosts();
+
+  return allPosts
     .filter((post) => post.status === "published")
     .map((post) => ({
       id: post.id,
@@ -50,9 +46,8 @@ export function generateStaticParams() {
 
 export default async function PostPage({ params }: Props) {
   // Validate and parse id
-  const { id } = await params;
-  const resolvedId = validateAndParseId(id);
-  const post = getPost(resolvedId);
+  const { id } = params;
+  const post = await getPost(id);
 
   if (!post || post.status !== "published") {
     notFound();

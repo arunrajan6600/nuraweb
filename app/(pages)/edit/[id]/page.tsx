@@ -1,55 +1,48 @@
-import { posts } from "@/data/posts";
+import { getAllPosts } from "@/lib/posts";
 import { EditPost } from "@/components/editor/edit-post";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import { Post } from "@/types/post";
 
-interface Props {
-  params: Promise<{ id: string }>;
+type SearchParams = Record<string, string | string[] | undefined>;
+
+interface EditParams {
+  id: string;
 }
 
-type Post = (typeof posts)[number];
-
-function getPost(id: string): Post | undefined {
-  return posts.find((p) => p.id === id);
-}
-
-// Generate static params for all posts
-export function generateStaticParams() {
-  return posts.map((post) => ({
+export async function generateStaticParams() {
+  const posts = await getAllPosts();
+  return posts.map((post: Post) => ({
     id: post.id,
   }));
 }
 
-// Validate and transform params to ensure they're sanitized
-function validateAndParseId(rawId: unknown) {
-  return typeof rawId === "string" ? rawId : "";
-}
-
-// Generate metadata for the page
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const resolvedId = validateAndParseId(id);
-  const post = getPost(resolvedId);
-
-  if (!post) {
-    return {
-      title: "Edit Post - Not Found",
-    };
-  }
+export async function generateMetadata({
+  params,
+}: {
+  params: EditParams;
+}): Promise<Metadata> {
+  const posts = await getAllPosts();
+  const post = posts.find((p: Post) => p.id === params.id);
+  if (!post) return {};
 
   return {
-    title: `Edit - ${post.title}`,
+    title: `Edit ${post.title}`,
+    description: `Edit ${post.title}`,
   };
 }
 
-export default async function EditPostPage({ params }: Props) {
-  const { id } = await params;
-  const resolvedId = validateAndParseId(id);
-  const post = getPost(resolvedId);
+interface PageProps {
+  params: EditParams;
+  searchParams: SearchParams;
+}
 
-  if (!post) {
-    notFound();
-  }
+export default async function EditPostPage({
+  params,
+}: PageProps) {
+  const posts = await getAllPosts();
+  const post = posts.find((p: Post) => p.id === params.id);
+  if (!post) notFound();
 
   return <EditPost post={post} />;
 }

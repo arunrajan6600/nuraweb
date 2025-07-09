@@ -1,10 +1,8 @@
-import { posts } from "@/data/posts";
+import { getPostsByType } from "@/lib/posts";
 import { PostCard } from "@/components/post/post-card";
 
-export default function ProjectsPage() {
-  const publishedPosts = posts.filter(
-    (post) => post.status === "published" && post.type === "project"
-  );
+export default async function ProjectsPage() {
+  const publishedPosts = await getPostsByType("project");
 
   return (
     <div className="flex flex-col gap-12 md:gap-16">

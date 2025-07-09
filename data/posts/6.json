@@ -1,0 +1,42 @@
+{
+  "title": "Data Sculptures: Materializing Information",
+  "cells": [
+    {
+      "id": "1",
+      "type": "markdown",
+      "content": "# Data Sculptures: Making the Invisible Visible\n\nTransforming abstract data into physical forms through 3D printing and generative design. Each sculpture represents a different dataset, making invisible patterns tangible and allowing viewers to physically interact with information."
+    },
+    {
+      "id": "2",
+      "type": "image",
+      "content": {
+        "url": "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4",
+        "alt": "3D printed data sculpture installation"
+      }
+    },
+    {
+      "id": "3",
+      "type": "markdown",
+      "content": "## The Process\n\n1. **Data Collection**: Gathering information from various sources\n2. **Data Analysis**: Identifying patterns and relationships\n3. **Algorithmic Design**: Creating 3D models based on data\n4. **Physical Production**: 3D printing and assembly\n5. **Installation**: Creating context and interaction opportunities\n\n## Featured Datasets\n\nThe exhibition includes sculptures based on:\n\n- Climate change data\n- Social media interactions\n- Urban movement patterns\n- Economic indicators\n- Biological processes"
+    },
+    {
+      "id": "4",
+      "type": "image",
+      "content": {
+        "url": "https://images.unsplash.com/photo-1615529328331-f8917597711f",
+        "alt": "Detailed view of a data sculpture"
+      }
+    },
+    {
+      "id": "5",
+      "type": "markdown",
+      "content": "## Technical Innovation\n\nThe project pushes the boundaries of:\n\n- Generative design algorithms\n- 3D printing techniques\n- Material science\n- Data visualization methods\n\n## Impact\n\nBy making data physical, we:\n\n- Create new ways of understanding complex information\n- Enable tactile interaction with abstract concepts\n- Bridge the digital-physical divide\n- Challenge traditional data visualization methods"
+    }
+  ],
+  "status": "published",
+  "featured": false,
+  "type": "project",
+  "id": "6",
+  "createdAt": "2025-05-05T13:45:00.000Z",
+  "updatedAt": "2025-06-15T08:55:12.331Z"
+}

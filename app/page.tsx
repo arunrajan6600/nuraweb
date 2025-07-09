@@ -1,19 +1,13 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { posts } from "@/data/posts";
+import { getFeaturedPosts } from "@/lib/posts";
 import { PostCard } from "@/components/post/post-card";
 import MatrixGridBackground from "@/components/ui/matrix-grid-background";
 
-export default function Home() {
-  const featuredProjects = posts.filter(
-    (post) =>
-      post.status === "published" && post.featured && post.type === "project"
-  );
-
-  const featuredBlogPosts = posts.filter(
-    (post) =>
-      post.status === "published" && post.featured && post.type === "blog"
-  );
+export default async function Home() {
+  const allFeatured = await getFeaturedPosts();
+  const featuredProjects = allFeatured.filter((post) => post.type === "project");
+  const featuredBlogPosts = allFeatured.filter((post) => post.type === "blog");
 
   return (
     <>

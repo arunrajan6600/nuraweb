@@ -1,0 +1,31 @@
+{
+  "title": "Code Syntax Highlighting Demo",
+  "cells": [
+    {
+      "id": "code1",
+      "type": "markdown",
+      "content": "# Code Syntax Highlighting Demo\n\nThis post demonstrates code syntax highlighting for various programming languages. The code blocks should be properly highlighted with dark backgrounds and colored syntax."
+    },
+    {
+      "id": "code2",
+      "type": "markdown",
+      "content": "## JavaScript Example\n\n```javascript\nfunction calculateTotal(items) {\n  return items\n    .filter(item => item.price > 0)\n    .map(item => item.price * item.quantity)\n    .reduce((total, price) => total + price, 0);\n}\n\nconst cart = [\n  { name: 'Product 1', price: 10, quantity: 2 },\n  { name: 'Product 2', price: 5, quantity: 4 }\n];\n\nconsole.log(`Total: $${calculateTotal(cart)}`);\n```\n\nThe JavaScript code above demonstrates a simple shopping cart calculation function."
+    },
+    {
+      "id": "code3",
+      "type": "markdown",
+      "content": "## CSS Example\n\n```css\n.container {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));\n  gap: 1rem;\n  padding: 2rem;\n  background-color: var(--bg-primary);\n}\n\n.card {\n  border-radius: 0.5rem;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n  transition: transform 0.3s ease;\n}\n\n.card:hover {\n  transform: translateY(-5px);\n}\n```\n\nThe CSS code above shows a basic grid layout with hover effects."
+    },
+    {
+      "id": "code4",
+      "type": "markdown",
+      "content": "## TypeScript Example\n\n```typescript\ninterface CartItem {\n  name: string;\n  price: number;\n  quantity: number;\n}\n\nclass ShoppingCart {\n  private items: CartItem[] = [];\n\n  addItem(item: CartItem): void {\n    this.items.push(item);\n  }\n\n  getTotal(): number {\n    return this.items\n      .filter(item => item.price > 0)\n      .reduce((total, item) => total + (item.price * item.quantity), 0);\n  }\n}\n```\n\nThe TypeScript code above demonstrates typed interfaces and classes for a shopping cart implementation."
+    }
+  ],
+  "status": "published",
+  "featured": true,
+  "type": "blog",
+  "id": "code-demo",
+  "createdAt": "2025-06-20T08:30:00.000Z",
+  "updatedAt": "2025-06-20T08:30:00.000Z"
+}

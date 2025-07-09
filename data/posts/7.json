@@ -1,0 +1,52 @@
+{
+  "title": "Creating Interactive Web Experiences with Three.js",
+  "cells": [
+    {
+      "id": "v1",
+      "type": "markdown",
+      "content": "# Creating Interactive Web Experiences with Three.js\n\nIn this tutorial, I'll walk through how to create engaging 3D web experiences using Three.js, a powerful JavaScript library that makes WebGL accessible to web developers."
+    },
+    {
+      "id": "v2",
+      "type": "video",
+      "content": {
+        "url": "https://www.youtube.com/watch?v=Q7AOvWpIVHU",
+        "title": "Getting Started with Three.js",
+        "provider": "youtube"
+      }
+    },
+    {
+      "id": "v3",
+      "type": "markdown",
+      "content": "## Why Three.js?\n\nThree.js abstracts away much of the complexity of WebGL while still providing impressive performance and capabilities. It's perfect for creating:\n\n- Interactive product showcases\n- Data visualizations\n- 3D games\n- Creative web experiments\n\nThe library handles the hard parts like scene setup, camera controls, lighting, and rendering, letting you focus on creating amazing experiences."
+    },
+    {
+      "id": "v4",
+      "type": "image",
+      "content": {
+        "url": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead",
+        "alt": "Code editor showing Three.js project"
+      }
+    },
+    {
+      "id": "v5",
+      "type": "markdown",
+      "content": "## Adding Interactivity\n\nOne of the most powerful aspects of Three.js is how easily you can add interactivity to your scenes. With just a few lines of code, you can create objects that respond to user input."
+    },
+    {
+      "id": "v6",
+      "type": "video",
+      "content": {
+        "url": "https://vimeo.com/462322540",
+        "title": "Advanced Three.js Animation Techniques",
+        "provider": "vimeo"
+      }
+    }
+  ],
+  "status": "published",
+  "featured": true,
+  "type": "blog",
+  "id": "7",
+  "createdAt": "2025-06-18T09:30:00.000Z",
+  "updatedAt": "2025-06-19T14:22:45.000Z"
+}

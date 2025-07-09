@@ -1,24 +1,10 @@
 import type { Metadata } from "next";
-import { Lato, Roboto_Mono } from "next/font/google";
 import "./globals.css";
+import "./fonts.css";
 import "./code-styles.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
-
-const lato = Lato({
-  variable: "--font-lato",
-  subsets: ["latin"],
-  weight: ["300", "400", "700", "900"],
-  display: "swap",
-});
-
-const robotoMono = Roboto_Mono({
-  variable: "--font-roboto-mono",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Arun Nura | Multi-disciplinary Art Practitioner",
@@ -32,17 +18,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${lato.variable} ${robotoMono.variable} min-h-screen bg-background font-sans antialiased`}
-      >
+      <head>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
+      <body className={`min-h-screen font-sans antialiased`}>
         <ThemeProvider>
-          <div className="relative min-h-screen flex flex-col z-10">
+          <div className="relative flex min-h-screen flex-col">
             <Header />
-            <main className="relative z-10 flex-1 w-full">
-              <div className="container py-8 md:py-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                {children}
-              </div>
-            </main>
+            <main className="flex-1">{children}</main>
             <Footer />
           </div>
         </ThemeProvider>
