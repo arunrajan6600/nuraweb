@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Github, Twitter, Instagram, Linkedin, Mail } from "lucide-react";
+import { Github, Instagram, Mail } from "lucide-react";
 import Link from "next/link";
 
 export function Footer() {
