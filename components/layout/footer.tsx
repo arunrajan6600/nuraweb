@@ -17,7 +17,7 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="font-bold text-xl tracking-tight">Follow Me</h3>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button variant="outline" size="icon" asChild>
+              {/* <Button variant="outline" size="icon" asChild>
                 <Link
                   href="https://twitter.com/username"
                   target="_blank"
@@ -26,10 +26,10 @@ export function Footer() {
                   <Twitter className="h-4 w-4" />
                   <span className="sr-only">Twitter</span>
                 </Link>
-              </Button>
+              </Button> */}
               <Button variant="outline" size="icon" asChild>
                 <Link
-                  href="https://github.com/username"
+                  href="https://github.com/arunrajan6600"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -39,7 +39,7 @@ export function Footer() {
               </Button>
               <Button variant="outline" size="icon" asChild>
                 <Link
-                  href="https://instagram.com/username"
+                  href="https://instagram.com/moodupani"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -47,7 +47,7 @@ export function Footer() {
                   <span className="sr-only">Instagram</span>
                 </Link>
               </Button>
-              <Button variant="outline" size="icon" asChild>
+              {/* <Button variant="outline" size="icon" asChild>
                 <Link
                   href="https://linkedin.com/in/username"
                   target="_blank"
@@ -56,9 +56,9 @@ export function Footer() {
                   <Linkedin className="h-4 w-4" />
                   <span className="sr-only">LinkedIn</span>
                 </Link>
-              </Button>
+              </Button> */}
               <Button variant="outline" size="icon" asChild>
-                <Link href="mailto:contact@example.com">
+                <Link href="mailto:arunr6600@yahoo.com">
                   <Mail className="h-4 w-4" />
                   <span className="sr-only">Email</span>
                 </Link>
