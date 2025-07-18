@@ -3,14 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev:site": "next dev",
     "dev:api": "cd external-serverless-functions/aws && npm run dev",
-    "dev:full": "concurrently \"npm run dev\" \"npm run dev:api\"",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "setup:aws": "cd external-serverless-functions/aws && ./setup-local.sh",
-    "test:api": "cd external-serverless-functions/aws && ./test-local-api.sh"
+    "lint": "next lint"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.846.0",

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -77,8 +78,21 @@ export function FileCard({ file, onDelete, onPreview }: FileCardProps) {
     if (!onDelete) return;
     
     setIsDeleting(true);
+    const toastId = toast.loading(`Deleting "${file.originalName}"`, {
+      description: "Removing file from storage..."
+    });
+    
     try {
       await onDelete(file.id);
+      toast.success(`File deleted successfully`, {
+        id: toastId,
+        description: file.originalName
+      });
+    } catch (error) {
+      toast.error(`Failed to delete file`, {
+        id: toastId,
+        description: `Could not delete "${file.originalName}". Please try again.`
+      });
     } finally {
       setIsDeleting(false);
     }
@@ -86,27 +100,39 @@ export function FileCard({ file, onDelete, onPreview }: FileCardProps) {
 
   const handlePreview = () => {
     if (onPreview) {
+      toast.loading(`Loading preview`, {
+        description: file.originalName,
+        duration: 2000
+      });
       onPreview(file);
     }
   };
 
   const handleOpenInNewTab = () => {
+    toast(`Opening file in new tab`, {
+      description: file.originalName,
+      icon: "↗️"
+    });
     window.open(file.s3Url, '_blank');
   };
 
   return (
-    <Card className="group hover:shadow-md transition-shadow">
+    <Card className="group hover:shadow-md transition-shadow w-full overflow-hidden">
       <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-3">
-            {getFileIcon(file.mimeType)}
-            <div className="flex-1 min-w-0">
-              <h3 className="font-medium text-sm truncate" title={file.originalName}>
-                {file.originalName}
-              </h3>
-              <p className="text-xs text-muted-foreground">
-                {formatFileSize(file.size)}
-              </p>
+        <div className="flex items-start justify-between mb-3 gap-2">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="flex-shrink-0">
+              {getFileIcon(file.mimeType)}
+            </div>
+            <div className="flex-1 min-w-0 max-w-[calc(100%-2rem)]">
+              <div className="break-all">
+                <h3 className="font-medium text-sm truncate block" title={file.originalName}>
+                  {file.originalName}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {formatFileSize(file.size)}
+                </p>
+              </div>
             </div>
           </div>
           
@@ -134,14 +160,16 @@ export function FileCard({ file, onDelete, onPreview }: FileCardProps) {
         </div>
 
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>Uploaded {formatDate(file.uploadedAt)}</span>
-            <Badge variant="secondary" className="text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+            <span className="truncate">Uploaded {formatDate(file.uploadedAt)}</span>
+            <Badge variant="secondary" className="text-xs flex-shrink-0">
               {file.mimeType.split('/')[0]}
             </Badge>
           </div>
           
-          <URLCopier url={file.s3Url} />
+          <div className="w-full overflow-hidden">
+            <URLCopier url={file.s3Url} />
+          </div>
         </div>
       </CardContent>
     </Card>

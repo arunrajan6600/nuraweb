@@ -5,6 +5,7 @@ import "./code-styles.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { Toaster } from "sonner";
 
 const lato = Lato({
   variable: "--font-lato",
@@ -45,6 +46,7 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
+          <Toaster richColors closeButton position="top-right" />
         </ThemeProvider>
       </body>
     </html>

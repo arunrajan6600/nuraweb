@@ -89,6 +89,12 @@ exports.handler = async (event) => {
               return null;
             }
 
+            const url = s3.getSignedUrl('getObject', {
+                Bucket: BUCKET_NAME,
+                Key: item.Key,
+                Expires: 3600, // URL expires in 1 hour
+            });
+
             return {
               id: item.Key,
               key: item.Key,
@@ -96,7 +102,7 @@ exports.handler = async (event) => {
               size: item.Size,
               mimeType: headData.ContentType || 'unknown',
               uploadedAt: item.LastModified,
-              s3Url: `https://${BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${item.Key}`,
+              s3Url: url,
               metadata: metadata,
             };
           } catch (error) {

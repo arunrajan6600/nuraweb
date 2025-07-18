@@ -1,32 +1,38 @@
-# Arun Nura Portfolio
+# NuraWeb Portfolio
 
 A modern, content-driven portfolio and blog site built with Next.js 13+, TypeScript, Tailwind CSS, and Shadcn UI. Features a cell-based content system, visual editor, and automated GitHub Pages deployment.
+
+## 📚 Documentation
+
+Please visit our [Documentation](./docs/README.md) for:
+
+- 🚀 [Getting Started Guide](./docs/getting-started/QUICK_START.md)
+- 📁 [File Upload System](./docs/features/FILE_SYSTEM.md)
 
 ## Quick Start
 
 1. Clone the repository:
-
    ```bash
    git clone <your-repository-url>
-   cd src
+   cd nuraweb
    ```
 
 2. Install dependencies:
-
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. Set up environment variables:
-
    ```bash
    cp .env.example .env
    ```
 
 4. Start the development server:
    ```bash
-   npm run dev
+   pnpm run dev
    ```
+
+For detailed setup instructions and documentation, please visit our [Getting Started Guide](./docs/getting-started/QUICK_START.md).
 
 Your site will be available at [http://localhost:3000](http://localhost:3000)
 

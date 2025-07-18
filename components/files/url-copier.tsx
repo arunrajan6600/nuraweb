@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Copy, Check } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface URLCopierProps {
   url: string;
@@ -13,12 +14,24 @@ export function URLCopier({ url }: URLCopierProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
+    const toastId = toast.loading('Copying URL', {
+      description: 'Adding to clipboard...'
+    });
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
+      toast.success('URL copied', {
+        id: toastId,
+        description: 'The URL has been copied to your clipboard',
+        duration: 2000
+      });
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       console.error('Failed to copy URL:', error);
+      toast.error('Copy failed', {
+        id: toastId,
+        description: 'Please select and copy the URL manually'
+      });
     }
   };
 
