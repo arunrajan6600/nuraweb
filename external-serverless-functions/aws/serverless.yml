@@ -1,0 +1,106 @@
+service: nuraweb-files
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-south-1
+  stage: ${opt:stage, 'dev'}
+  timeout: 30 # Increase timeout to 30 seconds
+  
+  environment:
+    ALLOWED_ORIGIN: http://localhost:3000
+    JWT_SECRET: super-secret-jwt-key-for-local-development
+    ADMIN_USERNAME: admin
+    ADMIN_PASSWORD: admin123
+    AWS_S3_BUCKET_NAME: nuraweb
+    MAX_FILE_SIZE: 52428800
+    ALLOWED_FILE_TYPES: image/*,video/*,audio/*,application/pdf,text/*
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+        - s3:PutObject
+        - s3:DeleteObject
+        - s3:ListBucket
+        - s3:HeadObject
+      Resource:
+        - "arn:aws:s3:::nuraweb"
+        - "arn:aws:s3:::nuraweb/*"
+
+functions:
+  auth-login:
+    handler: auth-login.handler
+    events:
+      - http:
+          path: auth/login
+          method: post
+          cors:
+            origin: http://localhost:3000
+            headers:
+              - Content-Type
+              - Authorization
+            allowCredentials: false
+
+  auth-verify:
+    handler: auth-verify.handler
+    events:
+      - http:
+          path: auth/verify
+          method: get
+          cors:
+            origin: http://localhost:3000
+            headers:
+              - Content-Type
+              - Authorization
+            allowCredentials: false
+
+  files-list:
+    handler: files-list.handler
+    events:
+      - http:
+          path: files
+          method: get
+          cors:
+            origin: http://localhost:3000
+            headers:
+              - Content-Type
+              - Authorization
+            allowCredentials: false
+
+  files-upload:
+    handler: files-upload.handler
+    timeout: 30
+    events:
+      - http:
+          path: files/upload
+          method: post
+          cors:
+            origin: http://localhost:3000
+            headers:
+              - Content-Type
+              - Authorization
+            allowCredentials: false
+
+  files-delete:
+    handler: files-delete.handler
+    events:
+      - http:
+          path: files/{id}
+          method: delete
+          cors:
+            origin: http://localhost:3000
+            headers:
+              - Content-Type
+              - Authorization
+            allowCredentials: false
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: 3001
+    host: localhost
+    cors: true
