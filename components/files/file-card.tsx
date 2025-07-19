@@ -87,7 +87,8 @@ export function FileCard({ file, onDelete, onPreview }: FileCardProps) {
         id: toastId,
         description: file.originalName
       });
-    } catch (error) {
+    } catch (err) {
+      console.error('Failed to delete file:', err);
       toast.error(`Failed to delete file`, {
         id: toastId,
         description: `Could not delete "${file.originalName}". Please try again.`

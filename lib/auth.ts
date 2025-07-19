@@ -10,9 +10,10 @@ export async function verifyJWT(request: Request) {
   const token = authHeader.substring(7);
   
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { username: string; [key: string]: any };
     return { valid: true, user: decoded };
-  } catch (error) {
+  } catch (err) {
+    console.error('Token verification failed:', err);
     return { valid: false, error: 'Invalid token' };
   }
 }

@@ -60,7 +60,7 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
     return null;
   };
 
-  const uploadFile = async (file: File, index: number) => {
+  const uploadFile = useCallback(async (file: File, index: number) => {
     const formData = new FormData();
     formData.append('file', file);
 
@@ -86,13 +86,14 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
         ));
         return null;
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('Network error during upload:', err);
       setUploadingFiles(prev => prev.map((item, i) => 
         i === index ? { ...item, error: 'Network error' } : item
       ));
       return null;
     }
-  };
+  }, [token]);
 
   const handleFiles = useCallback(async (files: FileList) => {
     setError('');
@@ -139,7 +140,7 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
     setTimeout(() => {
       setUploadingFiles([]);
     }, 2000);
-  }, [token, onUploadComplete]);
+  }, [token, onUploadComplete, uploadFile]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();

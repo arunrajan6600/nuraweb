@@ -58,7 +58,8 @@ export function FileBrowser() {
         setError('Failed to fetch files');
         setFiles([]);
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('Network error while fetching files:', err);
       setError('Network error while fetching files');
       setFiles([]);
     } finally {
@@ -89,7 +90,8 @@ export function FileBrowser() {
       } else {
         setError('Failed to delete file');
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('Network error while deleting file:', err);
       setError('Network error while deleting file');
     }
   };
