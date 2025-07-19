@@ -8,13 +8,13 @@ provider:
   timeout: 30 # Increase timeout to 30 seconds
   
   environment:
-    ALLOWED_ORIGIN: http://localhost:3000
-    JWT_SECRET: super-secret-jwt-key-for-local-development
-    ADMIN_USERNAME: admin
-    ADMIN_PASSWORD: admin123
-    AWS_S3_BUCKET_NAME: nuraweb
-    MAX_FILE_SIZE: 52428800
-    ALLOWED_FILE_TYPES: image/*,video/*,audio/*,application/pdf,text/*
+    ALLOWED_ORIGIN: ${env:ALLOWED_ORIGIN}
+    JWT_SECRET: ${env:JWT_SECRET}
+    ADMIN_USERNAME: ${env:ADMIN_USERNAME}
+    ADMIN_PASSWORD: ${env:ADMIN_PASSWORD}
+    AWS_S3_BUCKET_NAME: ${env:AWS_S3_BUCKET_NAME}
+    MAX_FILE_SIZE: ${env:MAX_FILE_SIZE}
+    ALLOWED_FILE_TYPES: ${env:ALLOWED_FILE_TYPES}
 
   iamRoleStatements:
     - Effect: Allow
@@ -25,8 +25,8 @@ provider:
         - s3:ListBucket
         - s3:HeadObject
       Resource:
-        - "arn:aws:s3:::nuraweb"
-        - "arn:aws:s3:::nuraweb/*"
+        - "arn:aws:s3:::${env:AWS_S3_BUCKET_NAME}"
+        - "arn:aws:s3:::${env:AWS_S3_BUCKET_NAME}/*"
 
 functions:
   auth-login:
@@ -36,7 +36,7 @@ functions:
           path: auth/login
           method: post
           cors:
-            origin: http://localhost:3000
+            origin: ${env:ALLOWED_ORIGIN}
             headers:
               - Content-Type
               - Authorization
@@ -49,7 +49,7 @@ functions:
           path: auth/verify
           method: get
           cors:
-            origin: http://localhost:3000
+            origin: ${env:ALLOWED_ORIGIN}
             headers:
               - Content-Type
               - Authorization
@@ -62,7 +62,7 @@ functions:
           path: files
           method: get
           cors:
-            origin: http://localhost:3000
+            origin: ${env:ALLOWED_ORIGIN}
             headers:
               - Content-Type
               - Authorization
@@ -76,7 +76,7 @@ functions:
           path: files/upload
           method: post
           cors:
-            origin: http://localhost:3000
+            origin: ${env:ALLOWED_ORIGIN}
             headers:
               - Content-Type
               - Authorization
@@ -89,7 +89,7 @@ functions:
           path: files/{id}
           method: delete
           cors:
-            origin: http://localhost:3000
+            origin: ${env:ALLOWED_ORIGIN}
             headers:
               - Content-Type
               - Authorization
@@ -104,3 +104,8 @@ custom:
     httpPort: 3001
     host: localhost
     cors: true
+  dotenv:
+    exclude:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_REGION

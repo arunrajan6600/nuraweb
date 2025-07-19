@@ -139,7 +139,60 @@ NEXT_PUBLIC_BASE_PATH="/repository-name"
 - Content is statically generated
 - Base path is required for correct asset loading
 
-## Troubleshooting
+## 🚀 Deployment
+
+### Production Deployment
+
+The site automatically deploys to GitHub Pages when you push to the `main` branch.
+
+#### Serverless API Functions
+
+The backend API functions are deployed to AWS Lambda:
+
+**Production API Base URL:** `https://lynzm5kprh.execute-api.ap-south-1.amazonaws.com/prod`
+
+**Available Endpoints:**
+- `POST /auth/login` - Admin authentication
+- `GET /auth/verify` - JWT token verification
+- `GET /files` - List uploaded files
+- `POST /files/upload` - Upload new files
+- `DELETE /files/{id}` - Delete files
+
+#### Frontend Deployment
+
+1. **Automatic Deployment (Recommended):**
+   - Push to `main` branch
+   - GitHub Actions will automatically build and deploy
+
+2. **Manual Deployment:**
+   ```bash
+   # Build for production
+   npm run build
+   
+   # Deploy to GitHub Pages (if configured)
+   npm run deploy
+   ```
+
+#### Environment Configuration
+
+- **Production:** Environment variables are set in GitHub Actions workflow
+- **Development:** Copy `.env.example` to `.env.local` and configure
+
+### Local Development with Production API
+
+To test the frontend with production APIs locally:
+
+1. Update `.env.local`:
+   ```bash
+   NEXT_PUBLIC_API_BASE_URL=https://lynzm5kprh.execute-api.ap-south-1.amazonaws.com/prod
+   ```
+
+2. Start development server:
+   ```bash
+   npm run dev
+   ```
+
+## 🔧 Troubleshooting
 
 1. **Images not loading:**
 
