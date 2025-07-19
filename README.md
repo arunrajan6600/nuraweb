@@ -1,32 +1,38 @@
-# Arun Nura Portfolio
+# NuraWeb Portfolio
 
 A modern, content-driven portfolio and blog site built with Next.js 13+, TypeScript, Tailwind CSS, and Shadcn UI. Features a cell-based content system, visual editor, and automated GitHub Pages deployment.
+
+## 📚 Documentation
+
+Please visit our [Documentation](./docs/README.md) for:
+
+- 🚀 [Getting Started Guide](./docs/getting-started/QUICK_START.md)
+- 📁 [File Upload System](./docs/features/FILE_SYSTEM.md)
 
 ## Quick Start
 
 1. Clone the repository:
-
    ```bash
    git clone <your-repository-url>
-   cd src
+   cd nuraweb
    ```
 
 2. Install dependencies:
-
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. Set up environment variables:
-
    ```bash
    cp .env.example .env
    ```
 
 4. Start the development server:
    ```bash
-   npm run dev
+   pnpm run dev
    ```
+
+For detailed setup instructions and documentation, please visit our [Getting Started Guide](./docs/getting-started/QUICK_START.md).
 
 Your site will be available at [http://localhost:3000](http://localhost:3000)
 
@@ -133,7 +139,60 @@ NEXT_PUBLIC_BASE_PATH="/repository-name"
 - Content is statically generated
 - Base path is required for correct asset loading
 
-## Troubleshooting
+## 🚀 Deployment
+
+### Production Deployment
+
+The site automatically deploys to GitHub Pages when you push to the `main` branch.
+
+#### Serverless API Functions
+
+The backend API functions are deployed to AWS Lambda:
+
+**Production API Base URL:** `https://lynzm5kprh.execute-api.ap-south-1.amazonaws.com/prod`
+
+**Available Endpoints:**
+- `POST /auth/login` - Admin authentication
+- `GET /auth/verify` - JWT token verification
+- `GET /files` - List uploaded files
+- `POST /files/upload` - Upload new files
+- `DELETE /files/{id}` - Delete files
+
+#### Frontend Deployment
+
+1. **Automatic Deployment (Recommended):**
+   - Push to `main` branch
+   - GitHub Actions will automatically build and deploy
+
+2. **Manual Deployment:**
+   ```bash
+   # Build for production
+   npm run build
+   
+   # Deploy to GitHub Pages (if configured)
+   npm run deploy
+   ```
+
+#### Environment Configuration
+
+- **Production:** Environment variables are set in GitHub Actions workflow
+- **Development:** Copy `.env.example` to `.env.local` and configure
+
+### Local Development with Production API
+
+To test the frontend with production APIs locally:
+
+1. Update `.env.local`:
+   ```bash
+   NEXT_PUBLIC_API_BASE_URL=https://lynzm5kprh.execute-api.ap-south-1.amazonaws.com/prod
+   ```
+
+2. Start development server:
+   ```bash
+   npm run dev
+   ```
+
+## 🔧 Troubleshooting
 
 1. **Images not loading:**
 

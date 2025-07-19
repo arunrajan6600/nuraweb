@@ -1,7 +1,8 @@
-import { Cell, VideoContent } from "@/types/post";
+import { Cell, VideoContent, FileContent } from "@/types/post";
 import { MarkdownCell } from "./markdown-cell";
 import { ImageCell } from "./image-cell";
 import { VideoCell } from "./video-cell";
+import { FileCell } from "./file-cell";
 
 interface PostCellProps {
   cell: Cell;
@@ -17,6 +18,8 @@ export function PostCell({ cell }: PostCellProps) {
       );
     case "video":
       return <VideoCell content={cell.content as VideoContent} />;
+    case "file":
+      return <FileCell {...(cell.content as FileContent)} />;
     default:
       return null;
   }
