@@ -4,7 +4,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ExternalLink, Download, FileText, Image, Video, File } from 'lucide-react';
+import { ExternalLink, Download, FileText, Image as ImageIcon, Video, File } from 'lucide-react';
 
 interface FileCellProps {
   s3Url: string;
@@ -26,7 +26,7 @@ export function FileCell({
   const getFileIcon = () => {
     switch (fileType) {
       case 'image':
-        return <Image className="h-4 w-4" />;
+        return <ImageIcon className="h-4 w-4" />;
       case 'video':
         return <Video className="h-4 w-4" />;
       case 'document':

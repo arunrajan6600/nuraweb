@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { 
   File, 
-  Image, 
+  Image as ImageIcon, 
   Video, 
   FileText, 
   MoreHorizontal, 
@@ -49,7 +49,7 @@ export function FileCard({ file, onDelete, onPreview }: FileCardProps) {
     if (typeof mimeType !== 'string') {
       return <File className="h-8 w-8 text-gray-500" />;
     }
-    if (mimeType.startsWith('image/')) return <Image className="h-8 w-8 text-blue-500" />;
+    if (mimeType.startsWith('image/')) return <ImageIcon className="h-8 w-8 text-blue-500" />;
     if (mimeType.startsWith('video/')) return <Video className="h-8 w-8 text-purple-500" />;
     if (mimeType.includes('pdf') || mimeType.startsWith('text/')) return <FileText className="h-8 w-8 text-red-500" />;
     return <File className="h-8 w-8 text-gray-500" />;

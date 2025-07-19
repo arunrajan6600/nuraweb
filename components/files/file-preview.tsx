@@ -14,7 +14,7 @@ import {
   ExternalLink, 
   Download, 
   File, 
-  Image, 
+  Image as ImageIcon, 
   Video, 
   FileText 
 } from 'lucide-react';
@@ -61,7 +61,7 @@ export function FilePreview({ file, open, onOpenChange }: FilePreviewProps) {
   };
 
   const getFileIcon = (mimeType: string) => {
-    if (mimeType.startsWith('image/')) return <Image className="h-6 w-6 text-blue-500" />;
+    if (mimeType.startsWith('image/')) return <ImageIcon className="h-6 w-6 text-blue-500" />;
     if (mimeType.startsWith('video/')) return <Video className="h-6 w-6 text-purple-500" />;
     if (mimeType.includes('pdf') || mimeType.startsWith('text/')) return <FileText className="h-6 w-6 text-red-500" />;
     return <File className="h-6 w-6 text-gray-500" />;

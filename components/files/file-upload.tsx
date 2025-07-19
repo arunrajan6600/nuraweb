@@ -5,7 +5,7 @@ import { useAuth } from '@/components/auth/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Upload, X, File, Image, Video, FileText } from 'lucide-react';
+import { Upload, X, File, Image as ImageIcon, Video, FileText } from 'lucide-react';
 import { UploadProgress } from './upload-progress';
 
 interface FileUploadProps {
@@ -39,7 +39,7 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
   const [error, setError] = useState<string>('');
 
   const getFileIcon = (mimeType: string) => {
-    if (mimeType.startsWith('image/')) return <Image className="h-4 w-4" />;
+    if (mimeType.startsWith('image/')) return <ImageIcon className="h-4 w-4" />;
     if (mimeType.startsWith('video/')) return <Video className="h-4 w-4" />;
     if (mimeType.includes('pdf') || mimeType.startsWith('text/')) return <FileText className="h-4 w-4" />;
     return <File className="h-4 w-4" />;
@@ -140,7 +140,7 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
     setTimeout(() => {
       setUploadingFiles([]);
     }, 2000);
-  }, [token, onUploadComplete, uploadFile]);
+  }, [onUploadComplete, uploadFile]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
