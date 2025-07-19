@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
 
 interface User {
   username: string;
@@ -34,17 +34,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Check for stored token on mount
-    const storedToken = localStorage.getItem('admin-token');
-    if (storedToken) {
-      verifyToken(storedToken);
-    } else {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const verifyToken = async (tokenToVerify: string) => {
+  const verifyToken = useCallback(async (tokenToVerify: string) => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/verify`, {
         headers: {
@@ -70,7 +60,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    // Check for stored token on mount
+    const storedToken = localStorage.getItem('admin-token');
+    if (storedToken) {
+      verifyToken(storedToken);
+    } else {
+      setIsLoading(false);
+    }
+  }, [verifyToken]);
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {

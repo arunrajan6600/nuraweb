@@ -17,7 +17,6 @@ import {
   Video, 
   FileText, 
   MoreHorizontal, 
-  Copy, 
   Eye, 
   Trash2,
   ExternalLink
