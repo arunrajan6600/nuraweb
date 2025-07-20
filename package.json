@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev:site": "next dev",
-    "dev:api": "cd external-serverless-functions/aws && npm run dev",
+    "dev:api": "cd external-serverless-functions/aws && export $(cat .env | grep -v '^#' | xargs) && npm run dev",
+    "deploy:api:dev": "cd external-serverless-functions/aws && export $(cat .env.dev | grep -v '^#' | xargs) && npm run deploy:dev",
+    "deploy:api:prod": "cd external-serverless-functions/aws && export $(cat .env.prod | grep -v '^#' | xargs) && npm run deploy:prod",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
