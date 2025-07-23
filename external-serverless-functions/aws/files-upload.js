@@ -46,6 +46,23 @@ const validateFile = (file) => {
   }
 };
 
+// Helper function to ensure proper binary handling
+const ensureBinaryContent = (content, isBase64Encoded) => {
+  if (Buffer.isBuffer(content)) {
+    return content;
+  }
+  
+  if (typeof content === 'string') {
+    if (isBase64Encoded) {
+      return Buffer.from(content, 'base64');
+    }
+    return Buffer.from(content, 'binary');
+  }
+  
+  // If it's already a Uint8Array or similar, convert to Buffer
+  return Buffer.from(content);
+};
+
 exports.handler = async (event) => {
   // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
@@ -75,17 +92,33 @@ exports.handler = async (event) => {
     // Verify JWT token
     const decoded = verifyToken(event);
 
-    // Parse multipart form data
-    const result = await parser.parse(event);
+    // Handle binary content properly
+    let body = event.body;
+    if (event.isBase64Encoded && typeof body === 'string') {
+      body = Buffer.from(body, 'base64');
+    }
+
+    // Parse multipart form data with proper binary handling
+    const parseEvent = {
+      ...event,
+      body: body
+    };
+    
+    const result = await parser.parse(parseEvent);
     const uploadedFiles = [];
+
+    console.log(`Processing ${result.files.length} files`);
 
     for (const file of result.files) {
       try {
+        // Ensure we have proper binary content
+        const fileContent = ensureBinaryContent(file.content, event.isBase64Encoded);
+        
         // Create a synthetic file object for validation
         const validationFile = {
           name: file.filename,
           type: file.contentType,
-          size: file.content.length,
+          size: fileContent.length,
         };
 
         // Validate file
@@ -95,32 +128,39 @@ exports.handler = async (event) => {
         const fileExtension = file.filename.split('.').pop();
         const uniqueKey = `${uuidv4()}.${fileExtension}`;
 
-        // Upload to S3
+        console.log(`Uploading file: ${file.filename}, Size: ${fileContent.length} bytes, Type: ${file.contentType}`);
+
+        // Upload to S3 with proper content handling
         const uploadParams = {
           Bucket: BUCKET_NAME,
           Key: uniqueKey,
-          Body: file.content,
+          Body: fileContent,
           ContentType: file.contentType,
+          ContentLength: fileContent.length,
           Metadata: {
             'original-filename': file.filename,
             'uploaded-by': decoded.username,
+            'file-size': fileContent.length.toString(),
+            'content-type': file.contentType,
           },
         };
 
         const s3Response = await s3.upload(uploadParams).promise();
+
+        console.log(`Successfully uploaded ${file.filename} to ${s3Response.Location}`);
 
         uploadedFiles.push({
           id: uniqueKey,
           filename: file.filename,
           url: s3Response.Location,
           contentType: file.contentType,
-          size: file.content.length,
+          size: fileContent.length,
           uploadedBy: decoded.username,
           createdAt: new Date().toISOString(),
         });
       } catch (fileError) {
         console.error(`Error processing file ${file.filename}:`, fileError);
-        // Optionally, you can add a file-specific error to the response
+        // Continue with other files but log the error
       }
     }
 

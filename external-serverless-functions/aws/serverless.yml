@@ -7,6 +7,17 @@ provider:
   stage: ${opt:stage, 'dev'}
   timeout: 30 # Increase timeout to 30 seconds
   
+  # Enable binary media types for API Gateway
+  apiGateway:
+    binaryMediaTypes:
+      - '*/*'
+      - 'multipart/form-data'
+      - 'image/*'
+      - 'video/*'
+      - 'audio/*'
+      - 'application/pdf'
+      - 'application/octet-stream'
+  
   environment:
     ALLOWED_ORIGIN: ${env:ALLOWED_ORIGIN}
     JWT_SECRET: ${env:JWT_SECRET}

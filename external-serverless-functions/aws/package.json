@@ -15,7 +15,8 @@
     "aws-sdk": "^2.1500.0",
     "jsonwebtoken": "^9.0.2",
     "lambda-multipart-parser": "^1.0.1",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "busboy": "^1.6.0"
   },
   "devDependencies": {
     "serverless": "^3.38.0",
