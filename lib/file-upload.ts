@@ -60,14 +60,14 @@ async function uploadFileRegular({
         try {
           const result = JSON.parse(xhr.responseText);
           resolve(result.files[0]); // Assuming single file upload
-        } catch (_e) {
+        } catch {
           reject(new Error('Invalid response format'));
         }
       } else {
         try {
           const error = JSON.parse(xhr.responseText);
           reject(new Error(error.error || 'Upload failed'));
-        } catch (_e) {
+        } catch {
           reject(new Error(`Upload failed with status ${xhr.status}`));
         }
       }
