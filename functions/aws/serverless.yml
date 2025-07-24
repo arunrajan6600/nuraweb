@@ -17,6 +17,8 @@ provider:
       - 'audio/*'
       - 'application/pdf'
       - 'application/octet-stream'
+    # Increase payload limit (max is 10MB for API Gateway)
+    maximumCompressionSize: 10485760  # 10MB in bytes
   
   environment:
     ALLOWED_ORIGIN: ${env:ALLOWED_ORIGIN}
@@ -85,6 +87,20 @@ functions:
     events:
       - http:
           path: files/upload
+          method: post
+          cors:
+            origin: ${env:ALLOWED_ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+            allowCredentials: false
+
+  files-presigned-url:
+    handler: files-presigned-url.handler
+    timeout: 30
+    events:
+      - http:
+          path: files/presigned-url
           method: post
           cors:
             origin: ${env:ALLOWED_ORIGIN}

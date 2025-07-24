@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Upload, X, File, Image as ImageIcon, Video, FileText } from 'lucide-react';
 import { UploadProgress } from './upload-progress';
+import { uploadFileOptimal } from '@/lib/file-upload';
 
 interface FileUploadProps {
   onUploadComplete?: (files: FileRecord[]) => void;
@@ -61,35 +62,41 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
   };
 
   const uploadFile = useCallback(async (file: File, index: number) => {
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/upload`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
+      const result = await uploadFileOptimal({
+        file,
+        token: token!,
+        apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL!,
+        onProgress: (progress) => {
+          setUploadingFiles(prev => prev.map((item, i) => 
+            i === index ? { ...item, progress } : item
+          ));
         },
-        body: formData,
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        setUploadingFiles(prev => prev.map((item, i) => 
-          i === index ? { ...item, progress: 100, completed: true } : item
-        ));
-        return result.file;
-      } else {
-        const error = await response.json();
-        setUploadingFiles(prev => prev.map((item, i) => 
-          i === index ? { ...item, error: error.error || 'Upload failed' } : item
-        ));
-        return null;
-      }
-    } catch (err) {
-      console.error('Network error during upload:', err);
+      // Mark as completed
       setUploadingFiles(prev => prev.map((item, i) => 
-        i === index ? { ...item, error: 'Network error' } : item
+        i === index ? { ...item, progress: 100, completed: true } : item
+      ));
+
+      // Convert to FileRecord format
+      return {
+        id: result.id,
+        filename: result.filename,
+        originalName: result.filename,
+        size: result.size,
+        mimeType: result.contentType,
+        s3Key: result.id,
+        s3Url: result.url,
+        uploadedAt: new Date(result.createdAt),
+        uploadedBy: result.uploadedBy,
+        isActive: true,
+      };
+
+    } catch (err) {
+      console.error('Upload error:', err);
+      setUploadingFiles(prev => prev.map((item, i) => 
+        i === index ? { ...item, error: err instanceof Error ? err.message : 'Upload failed' } : item
       ));
       return null;
     }
