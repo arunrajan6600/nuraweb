@@ -17,8 +17,6 @@ provider:
       - 'audio/*'
       - 'application/pdf'
       - 'application/octet-stream'
-    # Increase payload limit (max is 10MB for API Gateway)
-    maximumCompressionSize: 10485760  # 10MB in bytes
   
   environment:
     ALLOWED_ORIGIN: ${env:ALLOWED_ORIGIN}

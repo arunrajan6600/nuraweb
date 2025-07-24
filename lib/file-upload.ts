@@ -107,11 +107,27 @@ async function uploadFilePresigned({
   });
 
   if (!presignedResponse.ok) {
-    const error = await presignedResponse.json();
-    throw new Error(error.error || 'Failed to get upload URL');
+    // Get the response text to see what the actual error is
+    const responseText = await presignedResponse.text();
+    console.error('Pre-signed URL error response:', responseText);
+    
+    try {
+      const error = JSON.parse(responseText);
+      throw new Error(error.error || 'Failed to get upload URL');
+    } catch (parseError) {
+      // If it's not JSON, throw the raw response
+      throw new Error(`Server error: ${responseText}`);
+    }
   }
 
-  const presignedData = await presignedResponse.json();
+  let presignedData;
+  try {
+    presignedData = await presignedResponse.json();
+  } catch (parseError) {
+    const responseText = await presignedResponse.text();
+    console.error('Invalid JSON response from presigned URL:', responseText);
+    throw new Error(`Invalid response format: ${responseText}`);
+  }
   if (onProgress) onProgress(20);
 
   // Step 2: Upload directly to S3
