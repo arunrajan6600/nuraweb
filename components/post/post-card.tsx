@@ -21,9 +21,9 @@ export function PostCard({ post, variant = "default" }: PostCardProps) {
     case "project":
       return <ProjectPostCard post={post} variant={variant} />;
     case "paper":
-      return <PaperPostCard post={post} variant={variant} />;
+      return <PaperPostCard post={post} />;
     case "article":
-      return <ArticlePostCard post={post} variant={variant} />;
+      return <ArticlePostCard post={post} />;
     case "news":
       return <NewsPostCard post={post} variant={variant} />;
     case "link":
