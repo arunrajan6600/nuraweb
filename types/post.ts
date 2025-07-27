@@ -4,7 +4,7 @@ export interface Post {
   thumbnail?: ImageContent;
   status: "published" | "draft";
   featured: boolean;
-  type: "project" | "blog"; // New field to distinguish between projects and blog posts
+  type: "project" | "blog" | "paper" | "article" | "news" | "link";
   id: string;
   createdAt: string;
   updatedAt: string;

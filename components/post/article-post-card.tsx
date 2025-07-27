@@ -6,11 +6,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
-interface BlogPostCardProps {
+interface ArticlePostCardProps {
   post: Post;
 }
 
-export function BlogPostCard({ post }: BlogPostCardProps) {
+export function ArticlePostCard({ post }: ArticlePostCardProps) {
   const formattedDate = formatDistance(new Date(post.updatedAt), new Date(), {
     addSuffix: true,
   });
