@@ -114,7 +114,7 @@ async function uploadFilePresigned({
     try {
       const error = JSON.parse(responseText);
       throw new Error(error.error || 'Failed to get upload URL');
-    } catch (parseError) {
+    } catch (_parseError) {
       // If it's not JSON, throw the raw response
       throw new Error(`Server error: ${responseText}`);
     }
@@ -123,7 +123,7 @@ async function uploadFilePresigned({
   let presignedData;
   try {
     presignedData = await presignedResponse.json();
-  } catch (parseError) {
+  } catch (_parseError) {
     const responseText = await presignedResponse.text();
     console.error('Invalid JSON response from presigned URL:', responseText);
     throw new Error(`Invalid response format: ${responseText}`);
