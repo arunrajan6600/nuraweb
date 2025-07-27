@@ -16,6 +16,7 @@ The file upload system uses:
 
 1. **Create S3 Bucket:**
    - Go to AWS S3 Console
+   - Set bucket policy
    - Create a new bucket
    - Configure CORS settings
    - Set up lifecycle policies if needed

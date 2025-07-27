@@ -106,27 +106,34 @@ async function uploadFilePresigned({
     }),
   });
 
+  // Get response text once and reuse it
+  const responseText = await presignedResponse.text();
+  
   if (!presignedResponse.ok) {
-    // Get the response text to see what the actual error is
-    const responseText = await presignedResponse.text();
     console.error('Pre-signed URL error response:', responseText);
+    console.error('Response status:', presignedResponse.status);
+    console.error('Response headers:', Object.fromEntries(presignedResponse.headers.entries()));
     
     try {
       const error = JSON.parse(responseText);
       throw new Error(error.error || 'Failed to get upload URL');
-    } catch {
-      // If it's not JSON, throw the raw response
-      throw new Error(`Server error: ${responseText}`);
+    } catch (parseError) {
+      // Log the parse error for debugging
+      console.error('JSON parse error:', parseError);
+      // If it's not JSON, throw the raw response with more context
+      throw new Error(`Server error (${presignedResponse.status}): ${responseText}`);
     }
   }
 
   let presignedData;
   try {
-    presignedData = await presignedResponse.json();
-  } catch {
-    const responseText = await presignedResponse.text();
+    presignedData = JSON.parse(responseText);
+  } catch (parseError) {
     console.error('Invalid JSON response from presigned URL:', responseText);
-    throw new Error(`Invalid response format: ${responseText}`);
+    console.error('JSON parse error:', parseError);
+    console.error('Response status:', presignedResponse.status);
+    console.error('Response headers:', Object.fromEntries(presignedResponse.headers.entries()));
+    throw new Error(`Invalid response format (${presignedResponse.status}): ${responseText}`);
   }
   if (onProgress) onProgress(20);
 
