@@ -40,6 +40,14 @@ export function MainNav() {
           <NavigationMenuContent>
             <div className="grid gap-3 p-4 w-[300px]">
               <NavigationMenuLink asChild>
+                <Link href="/posts" className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                  <div className="text-sm font-medium leading-none">All Posts</div>
+                  <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                    Browse all published posts, projects, and articles.
+                  </p>
+                </Link>
+              </NavigationMenuLink>
+              <NavigationMenuLink asChild>
                 <Link href="/posts/articles" className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
                   <div className="text-sm font-medium leading-none">Stories and Literary works</div>
                   <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">

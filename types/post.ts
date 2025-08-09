@@ -8,6 +8,8 @@ export interface Post {
   id: string;
   createdAt: string;
   updatedAt: string;
+  excerpt?: string;
+  viewCount?: number;
 }
 
 export interface Cell {

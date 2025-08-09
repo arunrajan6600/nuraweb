@@ -43,5 +43,16 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# versioned posts backups (keep only recent ones in git)
+data/backups/v*.posts.ts
+data/backups/v*.build-manifest.json
+
+# deployment artifacts
+data/deployment-summary.json
+data/build-manifest.json
+
+# version management
+.version-lock
+
 venv/
 node_modules/

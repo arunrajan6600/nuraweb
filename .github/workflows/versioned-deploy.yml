@@ -1,0 +1,139 @@
+name: Versioned Deployment
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      deployment_type:
+        description: 'Type of deployment'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+        - full
+        - posts-only
+        - build-only
+      skip_api_check:
+        description: 'Skip API health check'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    env:
+      API_BASE_URL: ${{ secrets.API_BASE_URL || 'http://localhost:3001/dev' }}
+      SKIP_API_CHECK: ${{ github.event.inputs.skip_api_check || 'false' }}
+      BUILD_TYPE: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Setup API environment (if needed)
+      if: env.SKIP_API_CHECK != 'true'
+      run: |
+        # Install API dependencies
+        cd functions/aws
+        npm ci
+        
+        # Create basic .env for AWS DynamoDB
+        echo "AWS_REGION=us-east-1" > .env
+        echo "DYNAMODB_TABLE_NAME=NuraWeb-Posts" >> .env
+        echo "JWT_SECRET=test-secret" >> .env
+        # Note: AWS credentials should be configured via GitHub secrets
+
+    - name: Run deployment
+      run: |
+        DEPLOYMENT_TYPE="${{ github.event.inputs.deployment_type || 'full' }}"
+        npm run deploy $DEPLOYMENT_TYPE
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts-${{ github.run_number }}
+        path: |
+          .next/
+          data/
+          !data/backups/
+        retention-days: 30
+
+    - name: Upload versioned posts
+      uses: actions/upload-artifact@v4
+      with:
+        name: versioned-posts-${{ github.run_number }}
+        path: |
+          data/backups/
+          data/build-manifest.json
+          data/deployment-summary.json
+        retention-days: 90
+
+    - name: Create deployment tag
+      if: github.ref == 'refs/heads/main' && success()
+      run: |
+        # Read version from deployment summary
+        VERSION=$(node -p "require('./data/deployment-summary.json').postsVersion")
+        
+        # Create and push tag
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git tag -a "deploy-$VERSION" -m "Automated deployment $VERSION"
+        git push origin "deploy-$VERSION"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main' && success()
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./.next
+        cname: ${{ secrets.CUSTOM_DOMAIN }}
+
+    - name: Deployment Summary
+      if: always()
+      run: |
+        echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f "data/deployment-summary.json" ]; then
+          DEPLOYMENT_ID=$(node -p "require('./data/deployment-summary.json').deploymentId")
+          VERSION=$(node -p "require('./data/deployment-summary.json').postsVersion")
+          POSTS_COUNT=$(node -p "require('./data/deployment-summary.json').postsCount")
+          TIMESTAMP=$(node -p "require('./data/deployment-summary.json').timestamp")
+          
+          echo "- **Deployment ID**: $DEPLOYMENT_ID" >> $GITHUB_STEP_SUMMARY
+          echo "- **Posts Version**: $VERSION" >> $GITHUB_STEP_SUMMARY
+          echo "- **Posts Count**: $POSTS_COUNT" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Type**: $BUILD_TYPE" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp**: $TIMESTAMP" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ✅ Success" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "- **Status**: ❌ Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+
+  backup-notification:
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: success()
+    
+    steps:
+    - name: Notify successful deployment
+      run: |
+        echo "✅ Versioned deployment completed successfully!"
+        echo "🏷️ New version tag created and pushed"
+        echo "📦 Build artifacts uploaded"
+        echo "🌐 Site deployed to GitHub Pages"

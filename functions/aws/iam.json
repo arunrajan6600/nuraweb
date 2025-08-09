@@ -204,6 +204,41 @@
             "Resource": "arn:aws:s3:::nuraweb-files-*-serverlessdeploymentbucket-*"
         },
         {
+            "Sid": "ManageDynamoDB",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:CreateTable",
+                "dynamodb:DeleteTable",
+                "dynamodb:DescribeTable",
+                "dynamodb:ListTables",
+                "dynamodb:UpdateTable",
+                "dynamodb:Query",
+                "dynamodb:Scan",
+                "dynamodb:GetItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:BatchGetItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:TagResource",
+                "dynamodb:UntagResource",
+                "dynamodb:ListTagsOfResource"
+            ],
+            "Resource": [
+                "arn:aws:dynamodb:ap-south-1:961341520772:table/NuraWeb-*",
+                "arn:aws:dynamodb:ap-south-1:961341520772:table/NuraWeb-*/index/*"
+            ]
+        },
+        {
+            "Sid": "DynamoDBGlobalPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:ListTables",
+                "dynamodb:DescribeLimits"
+            ],
+            "Resource": "*"
+        },
+        {
             "Sid": "ServerlessDeploymentBucketObjects",
             "Effect": "Allow",
             "Action": [

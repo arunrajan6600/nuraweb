@@ -8,7 +8,7 @@ import { useAuth } from '@/components/auth/auth-provider';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { EditPost } from '@/components/editor/edit-post';
 
-export default function EditPostPage() {
+export default function AdminEditPostPage() {
   const params = useParams();
   const { token } = useAuth();
   const [post, setPost] = useState<Post | null>(null);
