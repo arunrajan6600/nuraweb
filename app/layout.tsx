@@ -3,6 +3,7 @@ import { Lato, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import "./code-styles.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/components/auth/auth-provider";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Toaster } from "sonner";
@@ -37,16 +38,18 @@ export default function RootLayout({
         className={`${lato.variable} ${robotoMono.variable} min-h-screen bg-background font-sans antialiased`}
       >
         <ThemeProvider>
-          <div className="relative min-h-screen flex flex-col z-10">
-            <Header />
-            <main className="relative z-10 flex-1 w-full">
-              <div className="container py-8 md:py-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                {children}
-              </div>
-            </main>
-            <Footer />
-          </div>
-          <Toaster richColors closeButton position="top-right" />
+          <AuthProvider>
+            <div className="relative min-h-screen flex flex-col z-10">
+              <Header />
+              <main className="relative z-10 flex-1 w-full">
+                <div className="container py-8 md:py-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                  {children}
+                </div>
+              </main>
+              <Footer />
+            </div>
+            <Toaster richColors closeButton position="top-right" />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

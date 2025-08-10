@@ -21,7 +21,10 @@ import {
 import { VisualEditor } from "@/components/editor/visual-editor";
 import { PostCell } from "@/components/post/post-cell";
 import { formatDistance } from "date-fns";
-import { Eye } from "lucide-react";
+import { Eye, Save, Loader2 } from "lucide-react";
+import { postsApi } from "@/lib/posts-api";
+import { useAuth } from "@/components/auth/auth-provider";
+import { toast } from "sonner";
 
 interface EditPostProps {
   post: Post;
@@ -29,10 +32,47 @@ interface EditPostProps {
 
 export function EditPost({ post }: EditPostProps) {
   const [editedPost, setEditedPost] = useState<Post>(post);
+  const [saving, setSaving] = useState(false);
+  const { token } = useAuth();
+
+  const handleSave = async () => {
+    if (!token) {
+      toast.error('Authentication required');
+      return;
+    }
+
+    setSaving(true);
+    
+    try {
+      postsApi.setAuthToken(token);
+      
+      const response = await postsApi.updatePost(editedPost.id, {
+        title: editedPost.title,
+        status: editedPost.status,
+        featured: editedPost.featured,
+        type: editedPost.type,
+        excerpt: editedPost.excerpt,
+        thumbnail: editedPost.thumbnail,
+        cells: editedPost.cells
+      });
+      
+      if (response.success) {
+        toast.success('Post saved successfully!');
+      } else {
+        toast.error(response.error || 'Failed to save post');
+      }
+    } catch (error) {
+      console.error('Error saving post:', error);
+      toast.error('Failed to save post');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleCopyJson = () => {
     const json = JSON.stringify(editedPost, null, 2);
     navigator.clipboard.writeText(json);
+    toast.success('JSON copied to clipboard!');
   };
 
   const formattedDate = formatDistance(
@@ -48,6 +88,24 @@ export function EditPost({ post }: EditPostProps) {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Edit Post: {post.title}</h1>
         <div className="flex gap-2">
+          <Button
+            onClick={handleSave}
+            disabled={saving}
+            className="bg-green-600 hover:bg-green-700"
+          >
+            {saving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                Save Changes
+              </>
+            )}
+          </Button>
+          
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="outline">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { MarkdownCell } from "../post/markdown-cell";
@@ -21,6 +21,7 @@ export function MarkdownEditor({
   className,
 }: MarkdownEditorProps) {
   const [activeTab, setActiveTab] = useState<"write" | "preview">("write");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Some useful markdown templates for common elements
   const templates = [
@@ -52,9 +53,7 @@ export function MarkdownEditor({
       setActiveTab("write");
     }
 
-    const textarea = document.querySelector(
-      "textarea"
-    ) as HTMLTextAreaElement | null;
+    const textarea = textareaRef.current;
     if (textarea) {
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
@@ -111,6 +110,7 @@ export function MarkdownEditor({
 
         <TabsContent value="write" className="mt-0">
           <Textarea
+            ref={textareaRef}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className="min-h-[350px] font-mono text-sm"

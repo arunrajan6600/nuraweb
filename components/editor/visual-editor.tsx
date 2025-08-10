@@ -1,6 +1,7 @@
 "use client";
 
 import { Cell, ImageContent, Post, VideoContent } from "@/types/post";
+import { POST_TYPES, PostType } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -209,24 +210,47 @@ function CellEditor({ cell, onChange, onDelete }: CellEditorProps) {
 
 export function VisualEditor({ post, onChange }: VisualEditorProps) {
   const [localPost, setLocalPost] = useState<Post>(post);
+  const [isUpdatingInternally, setIsUpdatingInternally] = useState(false);
+
+  // Sync with prop changes (for discard functionality) - but not when we're updating internally
+  useEffect(() => {
+    if (!isUpdatingInternally) {
+      setLocalPost(post);
+    }
+  }, [post, isUpdatingInternally]);
 
   useEffect(() => {
-    onChange(localPost);
-  }, [localPost, onChange]);
+    if (isUpdatingInternally) {
+      onChange(localPost);
+      setIsUpdatingInternally(false);
+    }
+  }, [localPost, onChange, isUpdatingInternally]);
 
-  const handleCellChange = useCallback((index: number, cell: Cell) => {
-    setLocalPost((prev) => ({
-      ...prev,
-      cells: prev.cells.map((c, i) => (i === index ? cell : c)),
-    }));
+  // Helper function to update post data internally
+  const updatePostInternally = useCallback((updateFn: (prev: Post) => Post) => {
+    setIsUpdatingInternally(true);
+    setLocalPost(updateFn);
   }, []);
 
-  const handleCellDelete = useCallback((index: number) => {
-    setLocalPost((prev) => ({
-      ...prev,
-      cells: prev.cells.filter((_, i) => i !== index),
-    }));
-  }, []);
+  const handleCellChange = useCallback(
+    (index: number, cell: Cell) => {
+      updatePostInternally((prev) => ({
+        ...prev,
+        cells: prev.cells.map((c, i) => (i === index ? cell : c)),
+      }));
+    },
+    [updatePostInternally]
+  );
+
+  const handleCellDelete = useCallback(
+    (index: number) => {
+      updatePostInternally((prev) => ({
+        ...prev,
+        cells: prev.cells.filter((_, i) => i !== index),
+      }));
+    },
+    [updatePostInternally]
+  );
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -243,7 +267,7 @@ export function VisualEditor({ post, onChange }: VisualEditorProps) {
       const { active, over } = event;
 
       if (over && active.id !== over.id) {
-        setLocalPost((prev) => {
+        updatePostInternally((prev) => {
           const oldIndex = prev.cells.findIndex(
             (cell) => cell.id === active.id
           );
@@ -256,7 +280,7 @@ export function VisualEditor({ post, onChange }: VisualEditorProps) {
         });
       }
     },
-    []
+    [updatePostInternally]
   );
 
   const addCell = useCallback(() => {
@@ -266,11 +290,11 @@ export function VisualEditor({ post, onChange }: VisualEditorProps) {
       content: "",
     };
 
-    setLocalPost((prev) => ({
+    updatePostInternally((prev) => ({
       ...prev,
       cells: [...prev.cells, newCell],
     }));
-  }, []);
+  }, [updatePostInternally]);
 
   return (
     <div className="space-y-6">
@@ -280,7 +304,10 @@ export function VisualEditor({ post, onChange }: VisualEditorProps) {
           <Input
             value={localPost.title}
             onChange={(e) =>
-              setLocalPost((prev) => ({ ...prev, title: e.target.value }))
+              updatePostInternally((prev) => ({
+                ...prev,
+                title: e.target.value,
+              }))
             }
           />
         </div>
@@ -294,7 +321,7 @@ export function VisualEditor({ post, onChange }: VisualEditorProps) {
                 <Input
                   value={localPost.thumbnail?.url || ""}
                   onChange={(e) =>
-                    setLocalPost((prev) => ({
+                    updatePostInternally((prev) => ({
                       ...prev,
                       thumbnail: {
                         ...(prev.thumbnail || { alt: "" }),
@@ -310,7 +337,7 @@ export function VisualEditor({ post, onChange }: VisualEditorProps) {
                 <Input
                   value={localPost.thumbnail?.alt || ""}
                   onChange={(e) =>
-                    setLocalPost((prev) => ({
+                    updatePostInternally((prev) => ({
                       ...prev,
                       thumbnail: {
                         ...(prev.thumbnail || { url: "" }),
@@ -329,16 +356,19 @@ export function VisualEditor({ post, onChange }: VisualEditorProps) {
           <Label>Post Type</Label>
           <Select
             value={localPost.type}
-            onValueChange={(value: "blog" | "project") =>
-              setLocalPost((prev) => ({ ...prev, type: value }))
+            onValueChange={(value: PostType) =>
+              updatePostInternally((prev) => ({ ...prev, type: value }))
             }
           >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="blog">Blog</SelectItem>
-              <SelectItem value="project">Project</SelectItem>
+              {POST_TYPES.map((type) => (
+                <SelectItem key={type.value} value={type.value}>
+                  {type.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

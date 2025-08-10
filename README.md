@@ -1,6 +1,6 @@
 # NuraWeb Portfolio
 
-A modern, content-driven portfolio and blog site built with Next.js 13+, TypeScript, Tailwind CSS, and Shadcn UI. Features a cell-based content system, visual editor, and automated GitHub Pages deployment.
+A modern, content-driven portfolio and blog site built with Next.js 13+, TypeScript, Tailwind CSS, and Shadcn UI. Features a cell-based content system, visual editor, automated GitHub Pages deployment, and DynamoDB-powered backend.
 
 ## 📚 Documentation
 
@@ -12,76 +12,143 @@ Please visit our [Documentation](./docs/README.md) for:
 ## Quick Start
 
 1. Clone the repository:
+
    ```bash
    git clone <your-repository-url>
    cd nuraweb
    ```
 
-2. Install dependencies:
+2. Set up AWS DynamoDB and install dependencies:
+
    ```bash
-   pnpm install
+   make db-setup
    ```
 
-3. Set up environment variables:
+   Or manually:
+
    ```bash
-   cp .env.example .env
+   ./setup-dynamodb.sh
    ```
 
-4. Start the development server:
+3. Start the development server:
+
    ```bash
-   pnpm run dev
+   make dev
+   # or
+   npm run dev
+   ```
+
+4. Start the Lambda functions (in a new terminal):
+   ```bash
+   make lambda-dev
+   # or
+   cd functions/aws && npm run dev
    ```
 
 For detailed setup instructions and documentation, please visit our [Getting Started Guide](./docs/getting-started/QUICK_START.md).
 
 Your site will be available at [http://localhost:3000](http://localhost:3000)
 
+## Database Configuration
+
+This project uses **Amazon DynamoDB** directly in AWS (no local setup required).
+
+### Prerequisites
+
+- AWS CLI installed and configured
+- AWS credentials with DynamoDB permissions
+- Internet connection for AWS API calls
+
+### Database Commands
+
+```bash
+# Setup AWS DynamoDB (first time)
+make db-setup
+
+# Create DynamoDB table in AWS
+make db-create-table
+
+# Check table status
+make db-status
+```
+
+### Environment Variables
+
+```bash
+# DynamoDB Configuration
+DYNAMODB_TABLE_NAME=NuraWeb-Posts
+AWS_REGION=ap-south-1
+
+# AWS Credentials (configured via aws configure)
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret-key
+```
+
 ## Content Management
 
 ### Managing Posts
 
-Posts are stored in `data/posts.ts`. Each post has:
+Posts are now stored in **DynamoDB** with automatic API synchronization. The system supports:
 
-- `id`: Unique identifier
-- `type`: Either "blog" or "project"
+- **Single Table Design**: Posts and post cells are stored in one DynamoDB table
+- **API-First**: All content management happens through REST API endpoints
+- **Admin Interface**: Built-in admin panel for managing posts (`/admin`)
+- **Versioned Deployments**: Automatic API sync during build process
+
+### Post Structure
+
+Each post in DynamoDB has:
+
+- `id`: Unique ULID identifier
+- `type`: Post type ("project", "blog", "paper", "article", "story", "general")
 - `title`: Post title
+- `slug`: URL-friendly identifier
 - `status`: "draft" or "published"
 - `featured`: Boolean to show on home page
-- `thumbnail`: Optional image URL
-- `cells`: Array of content cells
-- `createdAt`: Creation timestamp
-- `updatedAt`: Last update timestamp
+- `thumbnail`: Optional image with URL and alt text
+- `excerpt`: Brief description
+- `cells`: Array of content cells with different types (markdown, image, video, etc.)
+- `created_at` / `updated_at`: ISO timestamps
+- `view_count`: Automatic view tracking
 
 ### Using the Visual Editor
 
-1. Navigate to `/edit/[id]` (e.g., `/edit/1`)
-2. Use the visual editor to:
+1. **Admin Login**: Navigate to `/admin` and log in
+2. **Manage Posts**: View all posts with CRUD operations
+3. **Visual Editor**: Click the eye icon to open the visual editor
+4. **Content Editing**:
    - Add/edit markdown content
    - Add images via URL
    - Rearrange cells using drag-and-drop
    - Preview content in real-time
-3. Copy the generated JSON
-4. Update `data/posts.ts` with the new content
+5. **Save Changes**: Changes are automatically saved to DynamoDB
+
+### API Endpoints
+
+- `GET /posts` - List published posts
+- `GET /posts/{id}` - Get specific post
+- `POST /posts` - Create new post (auth required)
+- `PUT /posts/{id}` - Update post (auth required)
+- `DELETE /posts/{id}` - Delete post (auth required)
 
 ### Content Update SOP
 
 1. **Create/Edit Content:**
 
-   - Use the visual editor for content creation
-   - Save the JSON output
-   - Update `data/posts.ts`
-   - Test in development
+   - Use the admin interface at `/admin`
+   - Click "Visual Editor" for rich content editing
+   - Save directly through the interface
 
 2. **Review Changes:**
 
+   - Content is immediately available for preview
    - Check all pages: home, blog, projects
-   - Verify responsive layouts
-   - Test dark/light themes
+   - Verify responsive layouts and themes
 
 3. **Deploy Changes:**
-   - Commit changes to main branch
-   - Push to GitHub
-   - GitHub Actions will automatically deploy
+   - Build system automatically syncs with API
+   - No manual `data/posts.ts` updates needed
+   - Versioned deployments track content changes
 
 ## Deployment
 
@@ -152,6 +219,7 @@ The backend API functions are deployed to AWS Lambda:
 **Production API Base URL:** `https://lynzm5kprh.execute-api.ap-south-1.amazonaws.com/prod`
 
 **Available Endpoints:**
+
 - `POST /auth/login` - Admin authentication
 - `GET /auth/verify` - JWT token verification
 - `GET /files` - List uploaded files
@@ -161,14 +229,16 @@ The backend API functions are deployed to AWS Lambda:
 #### Frontend Deployment
 
 1. **Automatic Deployment (Recommended):**
+
    - Push to `main` branch
    - GitHub Actions will automatically build and deploy
 
 2. **Manual Deployment:**
+
    ```bash
    # Build for production
    npm run build
-   
+
    # Deploy to GitHub Pages (if configured)
    npm run deploy
    ```
@@ -183,6 +253,7 @@ The backend API functions are deployed to AWS Lambda:
 To test the frontend with production APIs locally:
 
 1. Update `.env.local`:
+
    ```bash
    NEXT_PUBLIC_API_BASE_URL=https://lynzm5kprh.execute-api.ap-south-1.amazonaws.com/prod
    ```
