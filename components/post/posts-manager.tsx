@@ -17,6 +17,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -24,7 +25,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Trash2, Edit, Eye, Plus, Filter, X } from "lucide-react";
+import { Trash2, Edit, Eye, Plus, Filter } from "lucide-react";
 import { toast } from "sonner";
 import { PostCell } from "@/components/post/post-cell";
 import { VisualEditor } from "@/components/editor/visual-editor";
@@ -49,6 +50,12 @@ export function PostsManager({
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [viewingPost, setViewingPost] = useState<Post | null>(null);
   const [editingPostVisual, setEditingPostVisual] = useState<Post | null>(null);
+  const [originalEditingPost, setOriginalEditingPost] = useState<Post | null>(
+    null
+  );
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
+  const [editorKey, setEditorKey] = useState(0);
   const [formData, setFormData] = useState({
     title: "",
     type: "blog" as "project" | "blog" | "paper" | "article" | "news" | "link",
@@ -79,11 +86,83 @@ export function PostsManager({
   }, []);
 
   // Handle visual editor changes
-  const handleVisualEditorChange = useCallback((updatedPost: Post) => {
-    // Only update the post in the list using functional update
-    setPosts((prevPosts) =>
-      prevPosts.map((p) => (p.id === updatedPost.id ? updatedPost : p))
-    );
+  const handleVisualEditorChange = useCallback(
+    (updatedPost: Post) => {
+      setEditingPostVisual(updatedPost);
+      // Check if there are unsaved changes by comparing with original
+      if (originalEditingPost) {
+        const hasChanges =
+          JSON.stringify(updatedPost) !== JSON.stringify(originalEditingPost);
+        setHasUnsavedChanges(hasChanges);
+      }
+    },
+    [originalEditingPost]
+  );
+
+  // Save changes handler
+  const handleSaveChanges = useCallback(async () => {
+    if (!editingPostVisual) return;
+
+    try {
+      if (authToken && isAdmin) {
+        // Save to API
+        await postsApi.updatePost(editingPostVisual.id, editingPostVisual);
+        toast.success("Post saved successfully!");
+      }
+
+      // Update the post in the list
+      setPosts((prevPosts) =>
+        prevPosts.map((p) =>
+          p.id === editingPostVisual.id ? editingPostVisual : p
+        )
+      );
+
+      // Update original post and reset dirty state
+      setOriginalEditingPost(editingPostVisual);
+      setHasUnsavedChanges(false);
+      toast.success("Changes saved!");
+    } catch (error) {
+      console.error("Error saving post:", error);
+      toast.error("Failed to save post");
+    }
+  }, [editingPostVisual, authToken, isAdmin]);
+
+  // Discard changes handler
+  const handleDiscardChanges = useCallback(() => {
+    if (originalEditingPost) {
+      setEditingPostVisual(JSON.parse(JSON.stringify(originalEditingPost))); // Deep copy
+      setHasUnsavedChanges(false);
+      setEditorKey((prev) => prev + 1); // Force re-render
+      toast.success("Changes discarded");
+    }
+  }, [originalEditingPost]);
+
+  // Close editor handler with confirmation
+  const handleCloseEditor = useCallback(() => {
+    if (hasUnsavedChanges) {
+      setShowCloseConfirmation(true);
+    } else {
+      setEditingPostVisual(null);
+      setOriginalEditingPost(null);
+      setHasUnsavedChanges(false);
+    }
+  }, [hasUnsavedChanges]);
+
+  // Confirm close without saving
+  const handleConfirmClose = useCallback(() => {
+    setEditingPostVisual(null);
+    setOriginalEditingPost(null);
+    setHasUnsavedChanges(false);
+    setShowCloseConfirmation(false);
+    toast.info("Changes discarded");
+  }, []);
+
+  // Open editor with original post tracking
+  const openVisualEditor = useCallback((post: Post) => {
+    setEditingPostVisual(post);
+    setOriginalEditingPost(JSON.parse(JSON.stringify(post))); // Deep copy
+    setHasUnsavedChanges(false);
+    setEditorKey((prev) => prev + 1); // Ensure fresh editor instance
   }, []);
 
   // Load posts
@@ -163,7 +242,7 @@ export function PostsManager({
             "Post created successfully! Would you like to open the visual editor to add content?"
           );
           if (shouldOpenEditor) {
-            setEditingPostVisual(postData);
+            openVisualEditor(postData);
           }
         }
 
@@ -247,171 +326,178 @@ export function PostsManager({
                 Create Post
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingPost ? "Edit Post" : "Create New Post"}
-                </DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="title">Title</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) =>
-                      setFormData({ ...formData, title: e.target.value })
-                    }
-                    placeholder="Enter post title"
-                    required
-                  />
-                </div>
+            <DialogContent className="!w-[90vw] !h-[90vh] !max-w-none !max-h-none p-0 overflow-hidden">
+              <div className="flex flex-col h-full">
+                <DialogHeader className="flex-shrink-0 px-6 py-4 border-b">
+                  <DialogTitle className="text-xl">
+                    {editingPost ? "Edit Post" : "Create New Post"}
+                  </DialogTitle>
+                </DialogHeader>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="type">Type</Label>
-                    <Select
-                      value={formData.type}
-                      onValueChange={(value: string) =>
-                        setFormData({
-                          ...formData,
-                          type: value as
-                            | "project"
-                            | "blog"
-                            | "paper"
-                            | "article"
-                            | "news"
-                            | "link",
-                        })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="blog">Blog</SelectItem>
-                        <SelectItem value="project">Project</SelectItem>
-                        <SelectItem value="article">Article</SelectItem>
-                        <SelectItem value="news">News</SelectItem>
-                        <SelectItem value="paper">Paper</SelectItem>
-                        <SelectItem value="link">Link</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="flex-1 overflow-y-auto px-6 py-4">
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div>
+                      <Label htmlFor="title">Title</Label>
+                      <Input
+                        id="title"
+                        value={formData.title}
+                        onChange={(e) =>
+                          setFormData({ ...formData, title: e.target.value })
+                        }
+                        placeholder="Enter post title"
+                        required
+                      />
+                    </div>
 
-                  <div>
-                    <Label htmlFor="status">Status</Label>
-                    <Select
-                      value={formData.status}
-                      onValueChange={(value: string) =>
-                        setFormData({
-                          ...formData,
-                          status: value as "draft" | "published",
-                        })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="draft">Draft</SelectItem>
-                        <SelectItem value="published">Published</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="type">Type</Label>
+                        <Select
+                          value={formData.type}
+                          onValueChange={(value: string) =>
+                            setFormData({
+                              ...formData,
+                              type: value as
+                                | "project"
+                                | "blog"
+                                | "paper"
+                                | "article"
+                                | "news"
+                                | "link",
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="blog">Blog</SelectItem>
+                            <SelectItem value="project">Project</SelectItem>
+                            <SelectItem value="article">Article</SelectItem>
+                            <SelectItem value="news">News</SelectItem>
+                            <SelectItem value="paper">Paper</SelectItem>
+                            <SelectItem value="link">Link</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                <div>
-                  <Label htmlFor="excerpt">Excerpt</Label>
-                  <Textarea
-                    id="excerpt"
-                    value={formData.excerpt}
-                    onChange={(e) =>
-                      setFormData({ ...formData, excerpt: e.target.value })
-                    }
-                    placeholder="Brief description of the post"
-                    rows={3}
-                  />
-                </div>
+                      <div>
+                        <Label htmlFor="status">Status</Label>
+                        <Select
+                          value={formData.status}
+                          onValueChange={(value: string) =>
+                            setFormData({
+                              ...formData,
+                              status: value as "draft" | "published",
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="draft">Draft</SelectItem>
+                            <SelectItem value="published">Published</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="thumbnail-url">Thumbnail URL</Label>
-                    <Input
-                      id="thumbnail-url"
-                      value={formData.thumbnail.url}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          thumbnail: {
-                            ...formData.thumbnail,
-                            url: e.target.value,
-                          },
-                        })
-                      }
-                      placeholder="https://..."
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="thumbnail-alt">Thumbnail Alt Text</Label>
-                    <Input
-                      id="thumbnail-alt"
-                      value={formData.thumbnail.alt}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          thumbnail: {
-                            ...formData.thumbnail,
-                            alt: e.target.value,
-                          },
-                        })
-                      }
-                      placeholder="Describe the image"
-                    />
-                  </div>
-                </div>
+                    <div>
+                      <Label htmlFor="excerpt">Excerpt</Label>
+                      <Textarea
+                        id="excerpt"
+                        value={formData.excerpt}
+                        onChange={(e) =>
+                          setFormData({ ...formData, excerpt: e.target.value })
+                        }
+                        placeholder="Brief description of the post"
+                        rows={3}
+                      />
+                    </div>
 
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="featured"
-                    checked={formData.featured}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, featured: checked })
-                    }
-                  />
-                  <Label htmlFor="featured">Featured post</Label>
-                </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="thumbnail-url">Thumbnail URL</Label>
+                        <Input
+                          id="thumbnail-url"
+                          value={formData.thumbnail.url}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              thumbnail: {
+                                ...formData.thumbnail,
+                                url: e.target.value,
+                              },
+                            })
+                          }
+                          placeholder="https://..."
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="thumbnail-alt">
+                          Thumbnail Alt Text
+                        </Label>
+                        <Input
+                          id="thumbnail-alt"
+                          value={formData.thumbnail.alt}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              thumbnail: {
+                                ...formData.thumbnail,
+                                alt: e.target.value,
+                              },
+                            })
+                          }
+                          placeholder="Describe the image"
+                        />
+                      </div>
+                    </div>
 
-                <div className="flex justify-between">
-                  <div>
-                    {editingPost && (
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={() => {
-                          setEditingPostVisual(editingPost);
-                          setIsCreateDialogOpen(false);
-                        }}
-                      >
-                        <Eye className="w-4 h-4 mr-2" />
-                        Open Visual Editor
-                      </Button>
-                    )}
-                  </div>
-                  <div className="flex space-x-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setIsCreateDialogOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button type="submit">
-                      {editingPost ? "Update" : "Create"} Post
-                    </Button>
-                  </div>
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        id="featured"
+                        checked={formData.featured}
+                        onCheckedChange={(checked) =>
+                          setFormData({ ...formData, featured: checked })
+                        }
+                      />
+                      <Label htmlFor="featured">Featured post</Label>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <div>
+                        {editingPost && (
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={() => {
+                              setEditingPostVisual(editingPost);
+                              setIsCreateDialogOpen(false);
+                            }}
+                          >
+                            <Eye className="w-4 h-4 mr-2" />
+                            Open Visual Editor
+                          </Button>
+                        )}
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setIsCreateDialogOpen(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button type="submit">
+                          {editingPost ? "Update" : "Create"} Post
+                        </Button>
+                      </div>
+                    </div>
+                  </form>
                 </div>
-              </form>
+              </div>
             </DialogContent>
           </Dialog>
         )}
@@ -537,7 +623,7 @@ export function PostsManager({
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => setEditingPostVisual(post)}
+                        onClick={() => openVisualEditor(post)}
                         title="Edit with Visual Editor"
                       >
                         <Edit className="w-4 h-4" />
@@ -568,80 +654,179 @@ export function PostsManager({
 
       {/* View Post Modal */}
       <Dialog open={!!viewingPost} onOpenChange={() => setViewingPost(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center justify-between">
-              <span>{viewingPost?.title}</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setViewingPost(null)}
-              >
-                <X className="w-4 h-4" />
-              </Button>
+        <DialogContent className="!w-[90vw] !h-[90vh] !max-w-none !max-h-none !p-0 !gap-0 flex flex-col">
+          <DialogHeader className="px-6 py-4 border-b shrink-0">
+            <DialogTitle className="text-2xl font-bold">
+              {viewingPost?.title}
             </DialogTitle>
-          </DialogHeader>
-          {viewingPost && (
-            <div className="space-y-6">
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary">{viewingPost.type}</Badge>
-                <Badge
-                  variant={
-                    viewingPost.status === "published" ? "default" : "secondary"
-                  }
-                >
-                  {viewingPost.status}
-                </Badge>
-                {viewingPost.featured && (
-                  <Badge variant="outline">Featured</Badge>
-                )}
-              </div>
-
-              {viewingPost.excerpt && (
-                <p className="text-muted-foreground">{viewingPost.excerpt}</p>
+            <div className="flex items-center gap-2 mt-2">
+              {viewingPost && (
+                <>
+                  <Badge variant="secondary">{viewingPost.type}</Badge>
+                  <Badge
+                    variant={
+                      viewingPost.status === "published"
+                        ? "default"
+                        : "secondary"
+                    }
+                  >
+                    {viewingPost.status}
+                  </Badge>
+                  {viewingPost.featured && (
+                    <Badge variant="outline">Featured</Badge>
+                  )}
+                </>
               )}
-
-              <div className="space-y-4">
-                {viewingPost.cells && viewingPost.cells.length > 0 ? (
-                  viewingPost.cells.map((cell) => (
-                    <PostCell key={cell.id} cell={cell} />
-                  ))
-                ) : (
-                  <p className="text-muted-foreground text-center py-8">
-                    No content available
-                  </p>
-                )}
-              </div>
             </div>
-          )}
+          </DialogHeader>
+
+          <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0">
+            {viewingPost && (
+              <div className="space-y-6">
+                {viewingPost.excerpt && (
+                  <div className="border-l-4 border-primary/20 pl-4">
+                    <p className="text-lg text-muted-foreground italic">
+                      {viewingPost.excerpt}
+                    </p>
+                  </div>
+                )}
+
+                <div className="space-y-6">
+                  {viewingPost.cells && viewingPost.cells.length > 0 ? (
+                    viewingPost.cells.map((cell) => (
+                      <div
+                        key={cell.id}
+                        className="border rounded-lg p-4 bg-muted/20"
+                      >
+                        <PostCell cell={cell} />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-12">
+                      <p className="text-muted-foreground text-lg">
+                        No content available
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        This post doesn&apos;t have any content cells yet.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
 
       {/* Visual Editor Modal */}
       <Dialog
         open={!!editingPostVisual}
-        onOpenChange={() => setEditingPostVisual(null)}
+        onOpenChange={() => handleCloseEditor()}
       >
-        <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center justify-between">
-              <span>Edit: {editingPostVisual?.title}</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setEditingPostVisual(null)}
-              >
-                <X className="w-4 h-4" />
-              </Button>
+        <DialogContent
+          className="!w-[90vw] !h-[90vh] !max-w-none !max-h-none !p-0 !gap-0 flex flex-col"
+          showCloseButton={false}
+        >
+          <DialogHeader className="flex-shrink-0 px-6 py-4 border-b bg-muted/20">
+            <DialogTitle className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <span className="text-xl font-semibold truncate">
+                  Edit: {editingPostVisual?.title}
+                </span>
+                {editingPostVisual && (
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <Badge variant="secondary">{editingPostVisual.type}</Badge>
+                    <Badge
+                      variant={
+                        editingPostVisual.status === "published"
+                          ? "default"
+                          : "secondary"
+                      }
+                    >
+                      {editingPostVisual.status}
+                    </Badge>
+                    {editingPostVisual.featured && (
+                      <Badge variant="outline">Featured</Badge>
+                    )}
+                    {hasUnsavedChanges && (
+                      <Badge variant="destructive">Unsaved Changes</Badge>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDiscardChanges}
+                  disabled={!hasUnsavedChanges}
+                >
+                  Discard Changes
+                </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={handleSaveChanges}
+                  disabled={!hasUnsavedChanges}
+                >
+                  Save Changes
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setViewingPost(editingPostVisual);
+                    setEditingPostVisual(null);
+                  }}
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Preview
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleCloseEditor}>
+                  Close
+                </Button>
+              </div>
             </DialogTitle>
           </DialogHeader>
-          {editingPostVisual && (
-            <VisualEditor
-              key={editingPostVisual.id}
-              post={editingPostVisual}
-              onChange={handleVisualEditorChange}
-            />
-          )}
+
+          <div className="flex-1 overflow-y-auto min-h-0">
+            {editingPostVisual && (
+              <div className="p-6">
+                <VisualEditor
+                  key={`${editingPostVisual.id}-${editorKey}`}
+                  post={editingPostVisual}
+                  onChange={handleVisualEditorChange}
+                />
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Close Confirmation Dialog */}
+      <Dialog
+        open={showCloseConfirmation}
+        onOpenChange={setShowCloseConfirmation}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Unsaved Changes</DialogTitle>
+            <DialogDescription>
+              You have unsaved changes. Are you sure you want to close the
+              editor? Your changes will be lost.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowCloseConfirmation(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmClose}>
+              Close Without Saving
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
