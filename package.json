@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev:site": "next dev",
-    "dev:api": "cd functions/aws && export $(cat .env | grep -v '^#' | xargs) && npm run dev",
+    "dev:api": "cd functions/aws && export $(cat .env.local | grep -v '^#' | xargs) && npm run dev",
     "deploy:api:dev": "cd functions/aws && export $(cat .env.dev | grep -v '^#' | xargs) && npm run deploy:dev",
     "deploy:api:prod": "cd functions/aws && export $(cat .env.prod | grep -v '^#' | xargs) && npm run deploy:prod",
     "prebuild": "node scripts/build-posts.js",

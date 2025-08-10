@@ -1,15 +1,25 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { PostsManager } from '@/components/post/posts-manager';
-import { useAuth } from '@/components/auth/auth-provider';
-import { ProtectedRoute } from '@/components/auth/protected-route';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Database, Server, Users, BarChart3, RefreshCw, ExternalLink, Cloud, Zap } from 'lucide-react';
-import { postsApi } from '@/lib/posts-api';
-import { toast } from 'sonner';
+import { useEffect, useState } from "react";
+import { Post } from "@/types/post";
+import { PostsManager } from "@/components/post/posts-manager";
+import { useAuth } from "@/components/auth/auth-provider";
+import { ProtectedRoute } from "@/components/auth/protected-route";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Database,
+  Server,
+  Users,
+  BarChart3,
+  RefreshCw,
+  ExternalLink,
+  Cloud,
+  Zap,
+} from "lucide-react";
+import { postsApi } from "@/lib/posts-api";
+import { toast } from "sonner";
 
 export default function AdminPostsPage() {
   const { token } = useAuth();
@@ -17,10 +27,12 @@ export default function AdminPostsPage() {
     totalPosts: 0,
     publishedPosts: 0,
     draftPosts: 0,
-    featuredPosts: 0
+    featuredPosts: 0,
   });
   const [loading, setLoading] = useState(true);
-  const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
+  const [apiStatus, setApiStatus] = useState<"checking" | "online" | "offline">(
+    "checking"
+  );
 
   // Load stats from API
   useEffect(() => {
@@ -34,25 +46,38 @@ export default function AdminPostsPage() {
   const loadStats = async () => {
     try {
       setLoading(true);
-      
+
       // Load all posts to calculate stats
-      const allPostsResponse = await postsApi.listPosts({ status: 'published' });
-      const draftPostsResponse = await postsApi.listPosts({ status: 'draft' });
-      const featuredPostsResponse = await postsApi.listPosts({ status: 'published', featured: true });
-      
-      const publishedPosts = allPostsResponse.data || [];
-      const draftPosts = draftPostsResponse.data || [];
-      const featuredPosts = featuredPostsResponse.data || [];
-      
+      const allPostsResponse = await postsApi.listPosts({
+        status: "published",
+      });
+      const draftPostsResponse = await postsApi.listPosts({ status: "draft" });
+      const featuredPostsResponse = await postsApi.listPosts({
+        status: "published",
+        featured: true,
+      });
+
+      const publishedPosts = (
+        Array.isArray(allPostsResponse.data) ? allPostsResponse.data : []
+      ) as Post[];
+      const draftPosts = (
+        Array.isArray(draftPostsResponse.data) ? draftPostsResponse.data : []
+      ) as Post[];
+      const featuredPosts = (
+        Array.isArray(featuredPostsResponse.data)
+          ? featuredPostsResponse.data
+          : []
+      ) as Post[];
+
       setStats({
         totalPosts: publishedPosts.length + draftPosts.length,
         publishedPosts: publishedPosts.length,
         draftPosts: draftPosts.length,
-        featuredPosts: featuredPosts.length
+        featuredPosts: featuredPosts.length,
       });
     } catch (error) {
-      console.error('Error loading stats:', error);
-      toast.error('Failed to load statistics');
+      console.error("Error loading stats:", error);
+      toast.error("Failed to load statistics");
     } finally {
       setLoading(false);
     }
@@ -60,18 +85,18 @@ export default function AdminPostsPage() {
 
   const checkApiStatus = async () => {
     try {
-      setApiStatus('checking');
+      setApiStatus("checking");
       await postsApi.listPosts({ limit: 1 });
-      setApiStatus('online');
-    } catch (error) {
-      setApiStatus('offline');
+      setApiStatus("online");
+    } catch {
+      setApiStatus("offline");
     }
   };
 
   const refreshStats = () => {
     loadStats();
     checkApiStatus();
-    toast.success('Statistics refreshed');
+    toast.success("Statistics refreshed");
   };
 
   return (
@@ -82,16 +107,19 @@ export default function AdminPostsPage() {
             <div>
               <h1 className="text-4xl font-bold mb-2">Posts Administration</h1>
               <p className="text-muted-foreground">
-                Manage your blog posts, projects, and content using AWS DynamoDB and Lambda functions.
+                Manage your blog posts, projects, and content using AWS DynamoDB
+                and Lambda functions.
               </p>
             </div>
-            <Button 
-              onClick={refreshStats} 
-              variant="outline" 
+            <Button
+              onClick={refreshStats}
+              variant="outline"
               className="flex items-center gap-2"
               disabled={loading}
             >
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
+              />
               Refresh
             </Button>
           </div>
@@ -106,7 +134,7 @@ export default function AdminPostsPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {loading ? '...' : stats.totalPosts}
+                {loading ? "..." : stats.totalPosts}
               </div>
               <p className="text-xs text-muted-foreground">
                 All posts in database
@@ -121,11 +149,9 @@ export default function AdminPostsPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {loading ? '...' : stats.publishedPosts}
+                {loading ? "..." : stats.publishedPosts}
               </div>
-              <p className="text-xs text-muted-foreground">
-                Live on website
-              </p>
+              <p className="text-xs text-muted-foreground">Live on website</p>
             </CardContent>
           </Card>
 
@@ -136,11 +162,9 @@ export default function AdminPostsPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {loading ? '...' : stats.draftPosts}
+                {loading ? "..." : stats.draftPosts}
               </div>
-              <p className="text-xs text-muted-foreground">
-                Work in progress
-              </p>
+              <p className="text-xs text-muted-foreground">Work in progress</p>
             </CardContent>
           </Card>
 
@@ -151,7 +175,7 @@ export default function AdminPostsPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {loading ? '...' : stats.featuredPosts}
+                {loading ? "..." : stats.featuredPosts}
               </div>
               <p className="text-xs text-muted-foreground">
                 Highlighted content
@@ -176,8 +200,20 @@ export default function AdminPostsPage() {
                     <Database className="h-4 w-4" />
                     DynamoDB Table
                   </span>
-                  <Badge variant={apiStatus === 'online' ? 'default' : apiStatus === 'offline' ? 'destructive' : 'secondary'}>
-                    {apiStatus === 'online' ? 'Connected' : apiStatus === 'offline' ? 'Offline' : 'Checking...'}
+                  <Badge
+                    variant={
+                      apiStatus === "online"
+                        ? "default"
+                        : apiStatus === "offline"
+                        ? "destructive"
+                        : "secondary"
+                    }
+                  >
+                    {apiStatus === "online"
+                      ? "Connected"
+                      : apiStatus === "offline"
+                      ? "Offline"
+                      : "Checking..."}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
@@ -185,8 +221,10 @@ export default function AdminPostsPage() {
                     <Zap className="h-4 w-4" />
                     Lambda Functions
                   </span>
-                  <Badge variant={apiStatus === 'online' ? 'default' : 'secondary'}>
-                    {apiStatus === 'online' ? 'Active' : 'Unknown'}
+                  <Badge
+                    variant={apiStatus === "online" ? "default" : "secondary"}
+                  >
+                    {apiStatus === "online" ? "Active" : "Unknown"}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
@@ -194,8 +232,10 @@ export default function AdminPostsPage() {
                     <Server className="h-4 w-4" />
                     API Gateway
                   </span>
-                  <Badge variant={apiStatus === 'online' ? 'default' : 'secondary'}>
-                    {apiStatus === 'online' ? 'Online' : 'Unknown'}
+                  <Badge
+                    variant={apiStatus === "online" ? "default" : "secondary"}
+                  >
+                    {apiStatus === "online" ? "Online" : "Unknown"}
                   </Badge>
                 </div>
               </div>
@@ -208,29 +248,31 @@ export default function AdminPostsPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start" 
-                  onClick={() => window.open('/posts', '_blank')}
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() => window.open("/posts", "_blank")}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
                   View Public Posts Page
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full justify-start"
-                  onClick={() => window.open('/admin/files', '_blank')}
+                  onClick={() => window.open("/admin/files", "_blank")}
                 >
                   <Database className="h-4 w-4 mr-2" />
                   Manage Files & Media
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full justify-start"
                   onClick={refreshStats}
                   disabled={loading}
                 >
-                  <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                  <RefreshCw
+                    className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
+                  />
                   Refresh Statistics
                 </Button>
               </div>

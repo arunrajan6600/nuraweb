@@ -1,4 +1,4 @@
-export interface PostsApiResponse<T = any> {
+export interface PostsApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
@@ -8,8 +8,8 @@ export interface PostsApiResponse<T = any> {
 
 export interface CreatePostData {
   title: string;
-  type?: 'project' | 'blog' | 'paper' | 'article' | 'news' | 'link';
-  status?: 'draft' | 'published';
+  type?: "project" | "blog" | "paper" | "article" | "news" | "link";
+  status?: "draft" | "published";
   featured?: boolean;
   excerpt?: string;
   thumbnail?: {
@@ -17,16 +17,18 @@ export interface CreatePostData {
     alt: string;
   };
   cells?: Array<{
-    type: 'markdown' | 'image' | 'video' | 'file';
-    content: any;
+    type: "markdown" | "image" | "video" | "file";
+    content: unknown;
   }>;
 }
 
-export interface UpdatePostData extends Partial<CreatePostData> {}
+export interface UpdatePostData extends Partial<CreatePostData> {
+  id?: string;
+}
 
 export interface PostFilters {
-  status?: 'draft' | 'published';
-  type?: 'project' | 'blog' | 'paper' | 'article' | 'news' | 'link';
+  status?: "draft" | "published";
+  type?: "project" | "blog" | "paper" | "article" | "news" | "link";
   featured?: boolean;
   limit?: number;
 }
@@ -36,7 +38,7 @@ class PostsApi {
   private token: string | null = null;
 
   constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+    this.baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
   }
 
   setAuthToken(token: string) {
@@ -45,11 +47,11 @@ class PostsApi {
 
   private getHeaders(): HeadersInit {
     const headers: HeadersInit = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
 
     if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
+      headers["Authorization"] = `Bearer ${this.token}`;
     }
 
     return headers;
@@ -71,12 +73,12 @@ class PostsApi {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'API request failed');
+        throw new Error(data.error || "API request failed");
       }
 
       return data;
     } catch (error) {
-      console.error('API request error:', error);
+      console.error("API request error:", error);
       throw error;
     }
   }
@@ -85,13 +87,14 @@ class PostsApi {
   async listPosts(filters?: PostFilters): Promise<PostsApiResponse> {
     const queryParams = new URLSearchParams();
 
-    if (filters?.status) queryParams.set('status', filters.status);
-    if (filters?.type) queryParams.set('type', filters.type);
-    if (filters?.featured !== undefined) queryParams.set('featured', filters.featured.toString());
-    if (filters?.limit) queryParams.set('limit', filters.limit.toString());
+    if (filters?.status) queryParams.set("status", filters.status);
+    if (filters?.type) queryParams.set("type", filters.type);
+    if (filters?.featured !== undefined)
+      queryParams.set("featured", filters.featured.toString());
+    if (filters?.limit) queryParams.set("limit", filters.limit.toString());
 
     const queryString = queryParams.toString();
-    const endpoint = `/posts${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/posts${queryString ? `?${queryString}` : ""}`;
 
     return this.makeRequest(endpoint);
   }
@@ -103,16 +106,19 @@ class PostsApi {
 
   // Create a new post (requires authentication)
   async createPost(postData: CreatePostData): Promise<PostsApiResponse> {
-    return this.makeRequest('/posts', {
-      method: 'POST',
+    return this.makeRequest("/posts", {
+      method: "POST",
       body: JSON.stringify(postData),
     });
   }
 
   // Update an existing post (requires authentication)
-  async updatePost(id: string, updateData: UpdatePostData): Promise<PostsApiResponse> {
+  async updatePost(
+    id: string,
+    updateData: UpdatePostData
+  ): Promise<PostsApiResponse> {
     return this.makeRequest(`/posts/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(updateData),
     });
   }
@@ -120,37 +126,40 @@ class PostsApi {
   // Delete a post (requires authentication)
   async deletePost(id: string): Promise<PostsApiResponse> {
     return this.makeRequest(`/posts/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
   // Convenience methods for common operations
   async getPublishedPosts(limit?: number): Promise<PostsApiResponse> {
-    return this.listPosts({ 
-      status: 'published', 
-      limit 
+    return this.listPosts({
+      status: "published",
+      limit,
     });
   }
 
   async getFeaturedPosts(limit?: number): Promise<PostsApiResponse> {
-    return this.listPosts({ 
-      status: 'published', 
-      featured: true, 
-      limit 
+    return this.listPosts({
+      status: "published",
+      featured: true,
+      limit,
     });
   }
 
-  async getPostsByType(type: PostFilters['type'], limit?: number): Promise<PostsApiResponse> {
-    return this.listPosts({ 
-      status: 'published', 
-      type, 
-      limit 
+  async getPostsByType(
+    type: PostFilters["type"],
+    limit?: number
+  ): Promise<PostsApiResponse> {
+    return this.listPosts({
+      status: "published",
+      type,
+      limit,
     });
   }
 
   async getDraftPosts(): Promise<PostsApiResponse> {
-    return this.listPosts({ 
-      status: 'draft' 
+    return this.listPosts({
+      status: "draft",
     });
   }
 }

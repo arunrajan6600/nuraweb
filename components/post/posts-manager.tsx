@@ -1,42 +1,61 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { postsApi, PostsApiResponse } from '@/lib/posts-api';
-import { Post } from '@/types/post';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Trash2, Edit, Eye, Plus, Filter } from 'lucide-react';
-import { toast } from 'sonner';
+import { useState, useEffect, useCallback } from "react";
+import { postsApi, PostsApiResponse } from "@/lib/posts-api";
+import { Post } from "@/types/post";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Trash2, Edit, Eye, Plus, Filter, X } from "lucide-react";
+import { toast } from "sonner";
+import { PostCell } from "@/components/post/post-cell";
+import { VisualEditor } from "@/components/editor/visual-editor";
 
 interface PostsManagerProps {
   authToken?: string;
   isAdmin?: boolean;
 }
 
-export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) {
+export function PostsManager({
+  authToken,
+  isAdmin = false,
+}: PostsManagerProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
-    status: 'all',
-    type: 'all',
-    featured: 'all'
+    status: "all",
+    type: "all",
+    featured: "all",
   });
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
+  const [viewingPost, setViewingPost] = useState<Post | null>(null);
+  const [editingPostVisual, setEditingPostVisual] = useState<Post | null>(null);
   const [formData, setFormData] = useState({
-    title: '',
-    type: 'blog' as 'project' | 'blog' | 'paper' | 'article' | 'news' | 'link',
-    status: 'draft' as 'published' | 'draft',
+    title: "",
+    type: "blog" as "project" | "blog" | "paper" | "article" | "news" | "link",
+    status: "draft" as "published" | "draft",
     featured: false,
-    excerpt: '',
-    thumbnail: { url: '', alt: '' }
+    excerpt: "",
+    thumbnail: { url: "", alt: "" },
   });
 
   // Set auth token when provided
@@ -46,47 +65,80 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
     }
   }, [authToken]);
 
+  // Handle filter changes
+  const handleStatusFilter = useCallback((value: string) => {
+    setFilters((prev) => ({ ...prev, status: value }));
+  }, []);
+
+  const handleTypeFilter = useCallback((value: string) => {
+    setFilters((prev) => ({ ...prev, type: value }));
+  }, []);
+
+  const handleFeaturedFilter = useCallback((value: string) => {
+    setFilters((prev) => ({ ...prev, featured: value }));
+  }, []);
+
+  // Handle visual editor changes
+  const handleVisualEditorChange = useCallback((updatedPost: Post) => {
+    // Only update the post in the list using functional update
+    setPosts((prevPosts) =>
+      prevPosts.map((p) => (p.id === updatedPost.id ? updatedPost : p))
+    );
+  }, []);
+
   // Load posts
-  const loadPosts = async () => {
+  const loadPosts = useCallback(async () => {
     try {
       setLoading(true);
-      const filterParams = {
-        ...(filters.status && filters.status !== 'all' && { status: filters.status as any }),
-        ...(filters.type && filters.type !== 'all' && { type: filters.type as any }),
-        ...(filters.featured && filters.featured !== 'all' && { featured: filters.featured === 'true' })
-      };
+      const filterParams: Record<string, string | boolean> = {};
+
+      if (filters.status && filters.status !== "all") {
+        filterParams.status = filters.status as "draft" | "published";
+      }
+      if (filters.type && filters.type !== "all") {
+        filterParams.type = filters.type as
+          | "project"
+          | "blog"
+          | "paper"
+          | "article"
+          | "news"
+          | "link";
+      }
+      if (filters.featured && filters.featured !== "all") {
+        filterParams.featured = filters.featured === "true";
+      }
 
       const response = await postsApi.listPosts(filterParams);
-      
+
       if (response.success && response.data) {
-        setPosts(response.data);
+        setPosts(Array.isArray(response.data) ? response.data : []);
       } else {
-        toast.error(response.error || 'Failed to load posts');
+        toast.error(response.error || "Failed to load posts");
       }
     } catch (error) {
-      console.error('Error loading posts:', error);
-      toast.error('Failed to load posts');
+      console.error("Error loading posts:", error);
+      toast.error("Failed to load posts");
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
 
   useEffect(() => {
     loadPosts();
-  }, [filters]);
+  }, [loadPosts]);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.title.trim()) {
-      toast.error('Title is required');
+      toast.error("Title is required");
       return;
     }
 
     try {
       let response: PostsApiResponse;
-      
+
       if (editingPost) {
         response = await postsApi.updatePost(editingPost.id, formData);
       } else {
@@ -94,60 +146,70 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
       }
 
       if (response.success) {
-        const successMessage = editingPost ? 'Post updated successfully' : 'Post created successfully';
+        const successMessage = editingPost
+          ? "Post updated successfully"
+          : "Post created successfully";
         toast.success(successMessage);
-        
+
         // If it's a new post, get the created post ID and offer to open visual editor
-        if (!editingPost && response.data?.id) {
-          const shouldOpenEditor = confirm('Post created successfully! Would you like to open the visual editor to add content?');
+        if (
+          !editingPost &&
+          response.data &&
+          typeof response.data === "object" &&
+          "id" in response.data
+        ) {
+          const postData = response.data as Post;
+          const shouldOpenEditor = confirm(
+            "Post created successfully! Would you like to open the visual editor to add content?"
+          );
           if (shouldOpenEditor) {
-            window.open(`/admin/posts/edit/${response.data.id}`, '_blank');
+            setEditingPostVisual(postData);
           }
         }
-        
+
         setIsCreateDialogOpen(false);
         setEditingPost(null);
         resetForm();
         loadPosts();
       } else {
-        toast.error(response.error || 'Failed to save post');
+        toast.error(response.error || "Failed to save post");
       }
     } catch (error) {
-      console.error('Error saving post:', error);
-      toast.error('Failed to save post');
+      console.error("Error saving post:", error);
+      toast.error("Failed to save post");
     }
   };
 
   // Handle delete
   const handleDelete = async (postId: string) => {
-    if (!confirm('Are you sure you want to delete this post?')) {
+    if (!confirm("Are you sure you want to delete this post?")) {
       return;
     }
 
     try {
       const response = await postsApi.deletePost(postId);
-      
+
       if (response.success) {
-        toast.success('Post deleted successfully');
+        toast.success("Post deleted successfully");
         loadPosts();
       } else {
-        toast.error(response.error || 'Failed to delete post');
+        toast.error(response.error || "Failed to delete post");
       }
     } catch (error) {
-      console.error('Error deleting post:', error);
-      toast.error('Failed to delete post');
+      console.error("Error deleting post:", error);
+      toast.error("Failed to delete post");
     }
   };
 
   // Reset form
   const resetForm = () => {
     setFormData({
-      title: '',
-      type: 'blog',
-      status: 'draft',
+      title: "",
+      type: "blog",
+      status: "draft",
       featured: false,
-      excerpt: '',
-      thumbnail: { url: '', alt: '' }
+      excerpt: "",
+      thumbnail: { url: "", alt: "" },
     });
   };
 
@@ -159,8 +221,8 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
       type: post.type,
       status: post.status,
       featured: post.featured,
-      excerpt: post.excerpt || '',
-      thumbnail: post.thumbnail || { url: '', alt: '' }
+      excerpt: post.excerpt || "",
+      thumbnail: post.thumbnail || { url: "", alt: "" },
     });
     setIsCreateDialogOpen(true);
   };
@@ -170,9 +232,17 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Posts Manager</h1>
         {isAdmin && (
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <Dialog
+            open={isCreateDialogOpen}
+            onOpenChange={setIsCreateDialogOpen}
+          >
             <DialogTrigger asChild>
-              <Button onClick={() => { resetForm(); setEditingPost(null); }}>
+              <Button
+                onClick={() => {
+                  resetForm();
+                  setEditingPost(null);
+                }}
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Create Post
               </Button>
@@ -180,7 +250,7 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>
-                  {editingPost ? 'Edit Post' : 'Create New Post'}
+                  {editingPost ? "Edit Post" : "Create New Post"}
                 </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -189,7 +259,9 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
                   <Input
                     id="title"
                     value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
                     placeholder="Enter post title"
                     required
                   />
@@ -198,7 +270,21 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="type">Type</Label>
-                    <Select value={formData.type} onValueChange={(value: any) => setFormData({ ...formData, type: value })}>
+                    <Select
+                      value={formData.type}
+                      onValueChange={(value: string) =>
+                        setFormData({
+                          ...formData,
+                          type: value as
+                            | "project"
+                            | "blog"
+                            | "paper"
+                            | "article"
+                            | "news"
+                            | "link",
+                        })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -215,7 +301,15 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
 
                   <div>
                     <Label htmlFor="status">Status</Label>
-                    <Select value={formData.status} onValueChange={(value: any) => setFormData({ ...formData, status: value })}>
+                    <Select
+                      value={formData.status}
+                      onValueChange={(value: string) =>
+                        setFormData({
+                          ...formData,
+                          status: value as "draft" | "published",
+                        })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -232,7 +326,9 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
                   <Textarea
                     id="excerpt"
                     value={formData.excerpt}
-                    onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, excerpt: e.target.value })
+                    }
                     placeholder="Brief description of the post"
                     rows={3}
                   />
@@ -244,10 +340,15 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
                     <Input
                       id="thumbnail-url"
                       value={formData.thumbnail.url}
-                      onChange={(e) => setFormData({ 
-                        ...formData, 
-                        thumbnail: { ...formData.thumbnail, url: e.target.value }
-                      })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          thumbnail: {
+                            ...formData.thumbnail,
+                            url: e.target.value,
+                          },
+                        })
+                      }
                       placeholder="https://..."
                     />
                   </div>
@@ -256,10 +357,15 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
                     <Input
                       id="thumbnail-alt"
                       value={formData.thumbnail.alt}
-                      onChange={(e) => setFormData({ 
-                        ...formData, 
-                        thumbnail: { ...formData.thumbnail, alt: e.target.value }
-                      })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          thumbnail: {
+                            ...formData.thumbnail,
+                            alt: e.target.value,
+                          },
+                        })
+                      }
                       placeholder="Describe the image"
                     />
                   </div>
@@ -269,7 +375,9 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
                   <Switch
                     id="featured"
                     checked={formData.featured}
-                    onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, featured: checked })
+                    }
                   />
                   <Label htmlFor="featured">Featured post</Label>
                 </div>
@@ -277,10 +385,13 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
                 <div className="flex justify-between">
                   <div>
                     {editingPost && (
-                      <Button 
-                        type="button" 
-                        variant="secondary" 
-                        onClick={() => window.open(`/admin/posts/edit/${editingPost.id}`, '_blank')}
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => {
+                          setEditingPostVisual(editingPost);
+                          setIsCreateDialogOpen(false);
+                        }}
                       >
                         <Eye className="w-4 h-4 mr-2" />
                         Open Visual Editor
@@ -288,11 +399,15 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
                     )}
                   </div>
                   <div className="flex space-x-2">
-                    <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsCreateDialogOpen(false)}
+                    >
                       Cancel
                     </Button>
                     <Button type="submit">
-                      {editingPost ? 'Update' : 'Create'} Post
+                      {editingPost ? "Update" : "Create"} Post
                     </Button>
                   </div>
                 </div>
@@ -314,7 +429,7 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label>Status</Label>
-              <Select value={filters.status} onValueChange={(value) => setFilters({ ...filters, status: value })}>
+              <Select value={filters.status} onValueChange={handleStatusFilter}>
                 <SelectTrigger>
                   <SelectValue placeholder="All statuses" />
                 </SelectTrigger>
@@ -328,7 +443,7 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
 
             <div>
               <Label>Type</Label>
-              <Select value={filters.type} onValueChange={(value) => setFilters({ ...filters, type: value })}>
+              <Select value={filters.type} onValueChange={handleTypeFilter}>
                 <SelectTrigger>
                   <SelectValue placeholder="All types" />
                 </SelectTrigger>
@@ -346,7 +461,10 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
 
             <div>
               <Label>Featured</Label>
-              <Select value={filters.featured} onValueChange={(value) => setFilters({ ...filters, featured: value })}>
+              <Select
+                value={filters.featured}
+                onValueChange={handleFeaturedFilter}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="All posts" />
                 </SelectTrigger>
@@ -379,38 +497,64 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <h3 className="text-lg font-semibold">{post.title}</h3>
-                      <Badge variant={post.status === 'published' ? 'default' : 'secondary'}>
+                      <Badge
+                        variant={
+                          post.status === "published" ? "default" : "secondary"
+                        }
+                      >
                         {post.status}
                       </Badge>
                       <Badge variant="outline">{post.type}</Badge>
-                      {post.featured && <Badge variant="secondary">Featured</Badge>}
+                      {post.featured && (
+                        <Badge variant="secondary">Featured</Badge>
+                      )}
                     </div>
-                    
+
                     {post.excerpt && (
-                      <p className="text-muted-foreground mb-2">{post.excerpt}</p>
+                      <p className="text-muted-foreground mb-2">
+                        {post.excerpt}
+                      </p>
                     )}
-                    
+
                     <div className="text-sm text-muted-foreground">
                       Created: {new Date(post.createdAt).toLocaleDateString()} |
                       Updated: {new Date(post.updatedAt).toLocaleDateString()}
-                      {post.viewCount !== undefined && ` | Views: ${post.viewCount}`}
+                      {post.viewCount !== undefined &&
+                        ` | Views: ${post.viewCount}`}
                     </div>
                   </div>
 
                   {isAdmin && (
                     <div className="flex space-x-2 ml-4">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => window.open(`/admin/posts/edit/${post.id}`, '_blank')}
-                        title="Open Visual Editor"
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setViewingPost(post)}
+                        title="View Post"
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => startEdit(post)}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setEditingPostVisual(post)}
+                        title="Edit with Visual Editor"
+                      >
                         <Edit className="w-4 h-4" />
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => handleDelete(post.id)}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => startEdit(post)}
+                        title="Edit Properties"
+                      >
+                        <Filter className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDelete(post.id)}
+                      >
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
@@ -421,6 +565,85 @@ export function PostsManager({ authToken, isAdmin = false }: PostsManagerProps) 
           ))}
         </div>
       )}
+
+      {/* View Post Modal */}
+      <Dialog open={!!viewingPost} onOpenChange={() => setViewingPost(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>{viewingPost?.title}</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setViewingPost(null)}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </DialogTitle>
+          </DialogHeader>
+          {viewingPost && (
+            <div className="space-y-6">
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary">{viewingPost.type}</Badge>
+                <Badge
+                  variant={
+                    viewingPost.status === "published" ? "default" : "secondary"
+                  }
+                >
+                  {viewingPost.status}
+                </Badge>
+                {viewingPost.featured && (
+                  <Badge variant="outline">Featured</Badge>
+                )}
+              </div>
+
+              {viewingPost.excerpt && (
+                <p className="text-muted-foreground">{viewingPost.excerpt}</p>
+              )}
+
+              <div className="space-y-4">
+                {viewingPost.cells && viewingPost.cells.length > 0 ? (
+                  viewingPost.cells.map((cell) => (
+                    <PostCell key={cell.id} cell={cell} />
+                  ))
+                ) : (
+                  <p className="text-muted-foreground text-center py-8">
+                    No content available
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Visual Editor Modal */}
+      <Dialog
+        open={!!editingPostVisual}
+        onOpenChange={() => setEditingPostVisual(null)}
+      >
+        <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>Edit: {editingPostVisual?.title}</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setEditingPostVisual(null)}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </DialogTitle>
+          </DialogHeader>
+          {editingPostVisual && (
+            <VisualEditor
+              key={editingPostVisual.id}
+              post={editingPostVisual}
+              onChange={handleVisualEditorChange}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

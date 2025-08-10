@@ -1,60 +1,68 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { postsApi } from '@/lib/posts-api';
-import { Post } from '@/types/post';
-import { PostCard } from '@/components/post/post-card';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter } from 'lucide-react';
-import { toast } from 'sonner';
+import { useEffect, useState, useCallback } from "react";
+import { postsApi } from "@/lib/posts-api";
+import { Post } from "@/types/post";
+import { PostCard } from "@/components/post/post-card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Search, Filter } from "lucide-react";
+import { toast } from "sonner";
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedType, setSelectedType] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedType, setSelectedType] = useState("all");
   const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
 
-  const loadPosts = async () => {
+  const loadPosts = useCallback(async () => {
     try {
       setLoading(true);
-      const filters: any = {};
-      
-      if (selectedType && selectedType !== 'all') filters.type = selectedType;
+      const filters: Record<string, unknown> = {};
+
+      if (selectedType && selectedType !== "all") filters.type = selectedType;
       if (showFeaturedOnly) filters.featured = true;
 
       const response = await postsApi.getPublishedPosts();
-      
+
       if (response.success && response.data) {
-        let filteredPosts = response.data;
-        
+        let filteredPosts = Array.isArray(response.data) ? response.data : [];
+
         // Apply search filter
         if (searchTerm) {
-          filteredPosts = filteredPosts.filter((post: Post) =>
-            post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (post.excerpt && post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()))
+          filteredPosts = filteredPosts.filter(
+            (post: Post) =>
+              post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              (post.excerpt &&
+                post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()))
           );
         }
-        
+
         setPosts(filteredPosts);
       } else {
-        toast.error(response.error || 'Failed to load posts');
+        toast.error(response.error || "Failed to load posts");
       }
     } catch (error) {
-      console.error('Error loading posts:', error);
-      toast.error('Failed to load posts');
+      console.error("Error loading posts:", error);
+      toast.error("Failed to load posts");
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedType, showFeaturedOnly, searchTerm]);
 
   useEffect(() => {
     loadPosts();
-  }, [selectedType, showFeaturedOnly]);
+  }, [loadPosts]);
 
   useEffect(() => {
     const delayedSearch = setTimeout(() => {
@@ -62,16 +70,16 @@ export default function PostsPage() {
     }, 300);
 
     return () => clearTimeout(delayedSearch);
-  }, [searchTerm]);
+  }, [loadPosts]);
 
   const postTypes = [
-    { value: 'all', label: 'All Types' },
-    { value: 'blog', label: 'Blog' },
-    { value: 'project', label: 'Projects' },
-    { value: 'article', label: 'Articles' },
-    { value: 'news', label: 'News' },
-    { value: 'paper', label: 'Papers' },
-    { value: 'link', label: 'Links' }
+    { value: "all", label: "All Types" },
+    { value: "blog", label: "Blog" },
+    { value: "project", label: "Projects" },
+    { value: "article", label: "Articles" },
+    { value: "news", label: "News" },
+    { value: "paper", label: "Papers" },
+    { value: "link", label: "Links" },
   ];
 
   return (
@@ -98,7 +106,7 @@ export default function PostsPage() {
                 />
               </div>
             </div>
-            
+
             <div>
               <Select value={selectedType} onValueChange={setSelectedType}>
                 <SelectTrigger>
@@ -121,7 +129,7 @@ export default function PostsPage() {
                 className="w-full"
               >
                 <Filter className="w-4 h-4 mr-2" />
-                {showFeaturedOnly ? 'Show All' : 'Featured Only'}
+                {showFeaturedOnly ? "Show All" : "Featured Only"}
               </Button>
             </div>
           </div>
@@ -147,12 +155,12 @@ export default function PostsPage() {
         <Card>
           <CardContent className="text-center py-12">
             <p className="text-muted-foreground mb-4">No posts found.</p>
-            {(searchTerm || selectedType !== 'all' || showFeaturedOnly) && (
+            {(searchTerm || selectedType !== "all" || showFeaturedOnly) && (
               <Button
                 variant="outline"
                 onClick={() => {
-                  setSearchTerm('');
-                  setSelectedType('all');
+                  setSearchTerm("");
+                  setSelectedType("all");
                   setShowFeaturedOnly(false);
                 }}
               >
@@ -166,14 +174,14 @@ export default function PostsPage() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">
-                {posts.length} post{posts.length !== 1 ? 's' : ''} found
+                {posts.length} post{posts.length !== 1 ? "s" : ""} found
               </span>
-              {selectedType && selectedType !== 'all' && (
-                <Badge variant="secondary">{postTypes.find(t => t.value === selectedType)?.label}</Badge>
+              {selectedType && selectedType !== "all" && (
+                <Badge variant="secondary">
+                  {postTypes.find((t) => t.value === selectedType)?.label}
+                </Badge>
               )}
-              {showFeaturedOnly && (
-                <Badge variant="secondary">Featured</Badge>
-              )}
+              {showFeaturedOnly && <Badge variant="secondary">Featured</Badge>}
             </div>
           </div>
 
