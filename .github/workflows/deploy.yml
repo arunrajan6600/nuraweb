@@ -36,20 +36,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Fetch posts from production API
-        env:
-          API_BASE_URL: https://lynzm5kprh.execute-api.ap-south-1.amazonaws.com/prod
-          API_STAGE: prod
-          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-        run: npm run build:posts
-
       - name: Build with Next.js
         env:
           NEXT_PUBLIC_BASE_PATH: /nuraweb
           NEXT_PUBLIC_DEFAULT_THEME: "dark"
           NEXT_PUBLIC_API_BASE_URL: https://lynzm5kprh.execute-api.ap-south-1.amazonaws.com/prod
           NEXT_PUBLIC_SITE_URL: https://arunrajan6600.github.io/nuraweb
+          # Environment variables for the prebuild posts fetch
+          API_BASE_URL: https://lynzm5kprh.execute-api.ap-south-1.amazonaws.com/prod
+          API_STAGE: prod
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
         run: npm run build
 
       - name: Upload artifact
