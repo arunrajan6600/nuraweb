@@ -1,11 +1,11 @@
-const { postQueries } = require('./db');
-const { requireAuth } = require('./auth-utils');
+const { postQueries } = require("./db");
+const { requireAuth } = require("./auth-utils");
 
 // CORS headers
 const corsHeaders = {
-  'Access-Control-Allow-Origin': process.env.ALLOWED_ORIGIN,
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS'
+  "Access-Control-Allow-Origin": process.env.ALLOWED_ORIGIN,
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 exports.handler = async (event, context) => {
@@ -13,11 +13,11 @@ exports.handler = async (event, context) => {
 
   try {
     // Handle CORS preflight
-    if (event.httpMethod === 'OPTIONS') {
+    if (event.httpMethod === "OPTIONS") {
       return {
         statusCode: 200,
         headers: corsHeaders,
-        body: ''
+        body: "",
       };
     }
 
@@ -33,12 +33,12 @@ exports.handler = async (event, context) => {
         statusCode: 400,
         headers: {
           ...corsHeaders,
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'Invalid JSON in request body'
-        })
+          error: "Invalid JSON in request body",
+        }),
       };
     }
 
@@ -48,44 +48,51 @@ exports.handler = async (event, context) => {
         statusCode: 400,
         headers: {
           ...corsHeaders,
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'Title is required'
-        })
+          error: "Title is required",
+        }),
       };
     }
 
     // Validate post type
-    const validTypes = ['project', 'blog', 'paper', 'article', 'news', 'link'];
+    const validTypes = [
+      "project",
+      "blog",
+      "paper",
+      "article",
+      "story",
+      "general",
+    ];
     if (postData.type && !validTypes.includes(postData.type)) {
       return {
         statusCode: 400,
         headers: {
           ...corsHeaders,
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'Invalid post type'
-        })
+          error: "Invalid post type",
+        }),
       };
     }
 
     // Validate status
-    const validStatuses = ['draft', 'published'];
+    const validStatuses = ["draft", "published"];
     if (postData.status && !validStatuses.includes(postData.status)) {
       return {
         statusCode: 400,
         headers: {
           ...corsHeaders,
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'Invalid post status'
-        })
+          error: "Invalid post status",
+        }),
       };
     }
 
@@ -100,50 +107,53 @@ exports.handler = async (event, context) => {
       status: newPost.status,
       featured: newPost.featured,
       type: newPost.type,
-      thumbnail: newPost.thumbnail_url ? {
-        url: newPost.thumbnail_url,
-        alt: newPost.thumbnail_alt || ''
-      } : undefined,
+      thumbnail: newPost.thumbnail_url
+        ? {
+            url: newPost.thumbnail_url,
+            alt: newPost.thumbnail_alt || "",
+          }
+        : undefined,
       excerpt: newPost.excerpt,
       createdAt: newPost.created_at,
       updatedAt: newPost.updated_at,
       publishedAt: newPost.published_at,
       viewCount: newPost.view_count,
       likeCount: newPost.like_count,
-      cells: postData.cells || []
+      cells: postData.cells || [],
     };
 
     return {
       statusCode: 201,
       headers: {
         ...corsHeaders,
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         success: true,
         data: transformedPost,
-        message: 'Post created successfully'
-      })
+        message: "Post created successfully",
+      }),
     };
-
   } catch (error) {
-    console.error('Post create error:', error);
+    console.error("Post create error:", error);
 
     // Handle authentication errors
-    if (error.message === 'Authentication required' || 
-        error.message === 'Invalid token' ||
-        error.message === 'No authorization header' ||
-        error.message === 'No token provided') {
+    if (
+      error.message === "Authentication required" ||
+      error.message === "Invalid token" ||
+      error.message === "No authorization header" ||
+      error.message === "No token provided"
+    ) {
       return {
         statusCode: 401,
         headers: {
           ...corsHeaders,
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'Authentication required'
-        })
+          error: "Authentication required",
+        }),
       };
     }
 
@@ -151,13 +161,13 @@ exports.handler = async (event, context) => {
       statusCode: 500,
       headers: {
         ...corsHeaders,
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         success: false,
-        error: 'Failed to create post',
-        message: error.message
-      })
+        error: "Failed to create post",
+        message: error.message,
+      }),
     };
   }
 };

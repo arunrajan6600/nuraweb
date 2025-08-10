@@ -12,21 +12,26 @@ Please visit our [Documentation](./docs/README.md) for:
 ## Quick Start
 
 1. Clone the repository:
+
    ```bash
    git clone <your-repository-url>
    cd nuraweb
    ```
 
 2. Set up AWS DynamoDB and install dependencies:
+
    ```bash
    make db-setup
    ```
+
    Or manually:
+
    ```bash
    ./setup-dynamodb.sh
    ```
 
 3. Start the development server:
+
    ```bash
    make dev
    # or
@@ -95,7 +100,7 @@ Posts are now stored in **DynamoDB** with automatic API synchronization. The sys
 Each post in DynamoDB has:
 
 - `id`: Unique ULID identifier
-- `type`: Post type ("blog", "project", "article", "news", "paper", "link")
+- `type`: Post type ("project", "blog", "paper", "article", "story", "general")
 - `title`: Post title
 - `slug`: URL-friendly identifier
 - `status`: "draft" or "published"
@@ -111,7 +116,7 @@ Each post in DynamoDB has:
 1. **Admin Login**: Navigate to `/admin` and log in
 2. **Manage Posts**: View all posts with CRUD operations
 3. **Visual Editor**: Click the eye icon to open the visual editor
-4. **Content Editing**: 
+4. **Content Editing**:
    - Add/edit markdown content
    - Add images via URL
    - Rearrange cells using drag-and-drop
@@ -129,11 +134,13 @@ Each post in DynamoDB has:
 ### Content Update SOP
 
 1. **Create/Edit Content:**
+
    - Use the admin interface at `/admin`
    - Click "Visual Editor" for rich content editing
    - Save directly through the interface
 
 2. **Review Changes:**
+
    - Content is immediately available for preview
    - Check all pages: home, blog, projects
    - Verify responsive layouts and themes
@@ -212,6 +219,7 @@ The backend API functions are deployed to AWS Lambda:
 **Production API Base URL:** `https://lynzm5kprh.execute-api.ap-south-1.amazonaws.com/prod`
 
 **Available Endpoints:**
+
 - `POST /auth/login` - Admin authentication
 - `GET /auth/verify` - JWT token verification
 - `GET /files` - List uploaded files
@@ -221,14 +229,16 @@ The backend API functions are deployed to AWS Lambda:
 #### Frontend Deployment
 
 1. **Automatic Deployment (Recommended):**
+
    - Push to `main` branch
    - GitHub Actions will automatically build and deploy
 
 2. **Manual Deployment:**
+
    ```bash
    # Build for production
    npm run build
-   
+
    # Deploy to GitHub Pages (if configured)
    npm run deploy
    ```
@@ -243,6 +253,7 @@ The backend API functions are deployed to AWS Lambda:
 To test the frontend with production APIs locally:
 
 1. Update `.env.local`:
+
    ```bash
    NEXT_PUBLIC_API_BASE_URL=https://lynzm5kprh.execute-api.ap-south-1.amazonaws.com/prod
    ```

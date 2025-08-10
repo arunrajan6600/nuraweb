@@ -1,4 +1,5 @@
 import { Post, Cell } from "@/types/post";
+import { PostType } from "@/lib/constants";
 
 export interface PostsApiResponse<T = unknown> {
   success: boolean;
@@ -10,7 +11,7 @@ export interface PostsApiResponse<T = unknown> {
 
 export interface CreatePostData {
   title: string;
-  type?: "project" | "blog" | "paper" | "article" | "news" | "link";
+  type?: PostType;
   status?: "draft" | "published";
   featured?: boolean;
   excerpt?: string;
@@ -30,7 +31,7 @@ export interface UpdatePostData extends Partial<CreatePostData> {
 
 export interface PostFilters {
   status?: "draft" | "published";
-  type?: "project" | "blog" | "paper" | "article" | "news" | "link";
+  type?: PostType;
   featured?: boolean;
   limit?: number;
 }

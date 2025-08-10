@@ -1,3 +1,5 @@
+import { PostType } from "@/lib/constants";
+
 export interface Post {
   title: string;
   slug?: string;
@@ -5,7 +7,7 @@ export interface Post {
   thumbnail?: ImageContent;
   status: "published" | "draft";
   featured: boolean;
-  type: "project" | "blog" | "paper" | "article" | "news" | "link";
+  type: PostType;
   id: string;
   createdAt: string;
   updatedAt: string;

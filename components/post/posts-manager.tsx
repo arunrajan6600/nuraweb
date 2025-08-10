@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { postsApi, PostsApiResponse } from "@/lib/posts-api";
 import { Post } from "@/types/post";
+import { POST_TYPES, POST_FILTER_TYPES, PostType } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -58,7 +59,7 @@ export function PostsManager({
   const [editorKey, setEditorKey] = useState(0);
   const [formData, setFormData] = useState({
     title: "",
-    type: "blog" as "project" | "blog" | "paper" | "article" | "news" | "link",
+    type: "blog" as PostType,
     status: "draft" as "published" | "draft",
     featured: false,
     excerpt: "",
@@ -175,13 +176,7 @@ export function PostsManager({
         filterParams.status = filters.status as "draft" | "published";
       }
       if (filters.type && filters.type !== "all") {
-        filterParams.type = filters.type as
-          | "project"
-          | "blog"
-          | "paper"
-          | "article"
-          | "news"
-          | "link";
+        filterParams.type = filters.type as PostType;
       }
       if (filters.featured && filters.featured !== "all") {
         filterParams.featured = filters.featured === "true";
@@ -357,13 +352,7 @@ export function PostsManager({
                           onValueChange={(value: string) =>
                             setFormData({
                               ...formData,
-                              type: value as
-                                | "project"
-                                | "blog"
-                                | "paper"
-                                | "article"
-                                | "news"
-                                | "link",
+                              type: value as PostType,
                             })
                           }
                         >
@@ -371,12 +360,11 @@ export function PostsManager({
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="blog">Blog</SelectItem>
-                            <SelectItem value="project">Project</SelectItem>
-                            <SelectItem value="article">Article</SelectItem>
-                            <SelectItem value="news">News</SelectItem>
-                            <SelectItem value="paper">Paper</SelectItem>
-                            <SelectItem value="link">Link</SelectItem>
+                            {POST_TYPES.map((type) => (
+                              <SelectItem key={type.value} value={type.value}>
+                                {type.label}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </div>
@@ -534,13 +522,11 @@ export function PostsManager({
                   <SelectValue placeholder="All types" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All types</SelectItem>
-                  <SelectItem value="blog">Blog</SelectItem>
-                  <SelectItem value="project">Project</SelectItem>
-                  <SelectItem value="article">Article</SelectItem>
-                  <SelectItem value="news">News</SelectItem>
-                  <SelectItem value="paper">Paper</SelectItem>
-                  <SelectItem value="link">Link</SelectItem>
+                  {POST_FILTER_TYPES.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

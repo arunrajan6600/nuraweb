@@ -1,6 +1,7 @@
 "use client";
 
 import { Cell, ImageContent, Post, VideoContent } from "@/types/post";
+import { POST_TYPES, PostType } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -355,7 +356,7 @@ export function VisualEditor({ post, onChange }: VisualEditorProps) {
           <Label>Post Type</Label>
           <Select
             value={localPost.type}
-            onValueChange={(value: "blog" | "project") =>
+            onValueChange={(value: PostType) =>
               updatePostInternally((prev) => ({ ...prev, type: value }))
             }
           >
@@ -363,8 +364,11 @@ export function VisualEditor({ post, onChange }: VisualEditorProps) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="blog">Blog</SelectItem>
-              <SelectItem value="project">Project</SelectItem>
+              {POST_TYPES.map((type) => (
+                <SelectItem key={type.value} value={type.value}>
+                  {type.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { postsApi } from "@/lib/posts-api";
 import { Post } from "@/types/post";
+import { POST_FILTER_TYPES } from "@/lib/constants";
 import { PostCard } from "@/components/post/post-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -72,16 +73,6 @@ export default function PostsPage() {
     return () => clearTimeout(delayedSearch);
   }, [loadPosts]);
 
-  const postTypes = [
-    { value: "all", label: "All Types" },
-    { value: "blog", label: "Blog" },
-    { value: "project", label: "Projects" },
-    { value: "article", label: "Articles" },
-    { value: "news", label: "News" },
-    { value: "paper", label: "Papers" },
-    { value: "link", label: "Links" },
-  ];
-
   return (
     <div className="container mx-auto p-6">
       <div className="mb-8">
@@ -113,7 +104,7 @@ export default function PostsPage() {
                   <SelectValue placeholder="Filter by type" />
                 </SelectTrigger>
                 <SelectContent>
-                  {postTypes.map((type) => (
+                  {POST_FILTER_TYPES.map((type) => (
                     <SelectItem key={type.value} value={type.value}>
                       {type.label}
                     </SelectItem>
@@ -178,7 +169,10 @@ export default function PostsPage() {
               </span>
               {selectedType && selectedType !== "all" && (
                 <Badge variant="secondary">
-                  {postTypes.find((t) => t.value === selectedType)?.label}
+                  {
+                    POST_FILTER_TYPES.find((t) => t.value === selectedType)
+                      ?.label
+                  }
                 </Badge>
               )}
               {showFeaturedOnly && <Badge variant="secondary">Featured</Badge>}
