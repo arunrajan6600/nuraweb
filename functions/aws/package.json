@@ -9,6 +9,7 @@
     "deploy": "serverless deploy",
     "deploy:dev": "serverless deploy --stage dev",
     "deploy:prod": "serverless deploy --stage prod",
+    "remove:prod": "serverless remove --stage prod",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
