@@ -40,18 +40,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 // Generate static params for all published posts
-export function generateStaticParams() {
-  return posts
-    .filter((post) => post.status === "published")
-    .map((post) => ({
-      id: post.id,
-    }));
+export async function generateStaticParams() {
+  // Handle case where posts array might be empty or undefined
+  if (!posts || posts.length === 0) {
+    console.warn("No posts available for generateStaticParams - returning placeholder");
+    // Return a placeholder param to satisfy Next.js static export requirements
+    return [{ id: "placeholder" }];
+  }
+  
+  // Filter out placeholder posts and only include published posts
+  const publishedPosts = posts.filter((post) => 
+    post.status === "published" && post.id !== "placeholder"
+  );
+  
+  if (publishedPosts.length === 0) {
+    console.warn("No published posts found for generateStaticParams - returning placeholder");
+    // Return a placeholder param to satisfy Next.js static export requirements
+    return [{ id: "placeholder" }];
+  }
+  
+  return publishedPosts.map((post) => ({
+    id: post.id,
+  }));
 }
 
 export default async function PostPage({ params }: Props) {
   // Validate and parse id
   const { id } = await params;
   const resolvedId = validateAndParseId(id);
+  
+  // Handle placeholder case - redirect to 404
+  if (resolvedId === "placeholder") {
+    notFound();
+  }
+  
   const post = getPost(resolvedId);
 
   if (!post || post.status !== "published") {
