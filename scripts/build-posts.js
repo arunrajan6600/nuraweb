@@ -76,10 +76,10 @@ function processStaticPosts(posts) {
     return {
       ...post,
       cells: post.cells.map((cell) => {
-        if (cell.type === "markdown" && typeof cell.content === "string") {
+        if (typeof cell.content === "string") {
           let content = cell.content;
 
-          // Remove outer quotes if they exist (double JSON encoding issue)
+          // Handle double JSON encoding for all cell types
           if (content.startsWith('"') && content.endsWith('"')) {
             content = content.slice(1, -1);
           }
@@ -89,6 +89,16 @@ function processStaticPosts(posts) {
             .replace(/\\n/g, "\n")
             .replace(/\\t/g, "\t")
             .replace(/\\"/g, '"');
+
+          // For non-markdown cells, try to parse as JSON if it looks like JSON
+          if (cell.type !== "markdown" && content.startsWith('{') && content.endsWith('}')) {
+            try {
+              content = JSON.parse(content);
+            } catch (e) {
+              console.warn(`Failed to parse JSON content for ${cell.type} cell:`, e.message);
+              // Keep original content if parsing fails
+            }
+          }
 
           return {
             ...cell,
@@ -101,6 +111,17 @@ function processStaticPosts(posts) {
   });
 }
 
+// Sanitize posts for TypeScript compatibility
+function sanitizeForTypeScript(posts) {
+  return posts.map((post) => ({
+    ...post,
+    // Convert null values to undefined for TypeScript compatibility
+    excerpt: post.excerpt === null ? undefined : post.excerpt,
+    thumbnail: post.thumbnail === null ? undefined : post.thumbnail,
+    slug: post.slug === null ? undefined : post.slug,
+  }));
+}
+
 // Authenticate with production API if needed
 async function authenticateAPI() {
   if (API_STAGE === "dev" || !ADMIN_USERNAME || !ADMIN_PASSWORD) {
@@ -111,7 +132,7 @@ async function authenticateAPI() {
   try {
     console.log("🔐 Authenticating with production API...");
     const authUrl = `${API_BASE_URL}/auth/login`;
-    
+
     const response = await makeRequest(authUrl, {
       method: "POST",
       headers: {
@@ -124,11 +145,15 @@ async function authenticateAPI() {
     });
 
     if (response.statusCode !== 200) {
-      throw new Error(`Authentication failed with status ${response.statusCode}`);
+      throw new Error(
+        `Authentication failed with status ${response.statusCode}`
+      );
     }
 
     if (!response.data.success || !response.data.token) {
-      throw new Error(`Authentication failed: ${response.data.message || "Unknown error"}`);
+      throw new Error(
+        `Authentication failed: ${response.data.message || "Unknown error"}`
+      );
     }
 
     console.log("✅ Successfully authenticated with production API");
@@ -143,10 +168,10 @@ async function authenticateAPI() {
 async function fetchPostsFromAPI() {
   try {
     console.log("🔍 Fetching posts from API...");
-    
+
     // Authenticate if using production API
     const authToken = await authenticateAPI();
-    
+
     // Build the correct URL based on environment
     let url;
     if (API_STAGE === "prod") {
@@ -155,7 +180,7 @@ async function fetchPostsFromAPI() {
       // Development API uses /dev/posts
       url = `${API_BASE_URL}/dev/posts`;
     }
-    
+
     console.log(`🌐 API URL: ${url} (stage: ${API_STAGE})`);
 
     const headers = {
@@ -191,7 +216,13 @@ async function fetchPostsFromAPI() {
       `🔧 Processed ${processedPosts.length} posts to fix escaped content`
     );
 
-    return processedPosts;
+    // Sanitize posts for TypeScript compatibility
+    const sanitizedPosts = sanitizeForTypeScript(processedPosts);
+    console.log(
+      `🧹 Sanitized ${sanitizedPosts.length} posts for TypeScript compatibility`
+    );
+
+    return sanitizedPosts;
   } catch (error) {
     console.error("❌ Error fetching posts from API:", error.message);
 
@@ -218,7 +249,10 @@ async function fetchPostsFromAPI() {
 // Generate TypeScript file content
 function generatePostsFileContent(posts, versionTag) {
   const timestamp = new Date().toISOString();
-  const apiEndpoint = API_STAGE === "prod" ? `${API_BASE_URL}/posts` : `${API_BASE_URL}/dev/posts`;
+  const apiEndpoint =
+    API_STAGE === "prod"
+      ? `${API_BASE_URL}/posts`
+      : `${API_BASE_URL}/dev/posts`;
 
   return `// Auto-generated posts file
 // Version: ${versionTag}
@@ -270,8 +304,11 @@ function writeVersionedPosts(posts, versionTag) {
 
 // Create build manifest
 function createBuildManifest(versionTag, posts) {
-  const apiEndpoint = API_STAGE === "prod" ? `${API_BASE_URL}/posts` : `${API_BASE_URL}/dev/posts`;
-  
+  const apiEndpoint =
+    API_STAGE === "prod"
+      ? `${API_BASE_URL}/posts`
+      : `${API_BASE_URL}/dev/posts`;
+
   const manifest = {
     version: versionTag,
     timestamp: new Date().toISOString(),
@@ -376,27 +413,31 @@ async function buildPosts() {
     };
   } catch (error) {
     console.error("❌ Posts build failed:", error.message);
-    
+
     // For static builds, try to use existing posts data as fallback
     console.log("🔄 Attempting to use existing posts data as fallback...");
-    
+
     try {
       const existingPostsFile = path.join(DATA_DIR, "posts.ts");
       if (fs.existsSync(existingPostsFile)) {
         console.log("📂 Found existing posts.ts file, using as fallback");
-        
+
         // Read the existing file to extract posts data
         const existingContent = fs.readFileSync(existingPostsFile, "utf8");
-        const match = existingContent.match(/export const posts: Post\[\] = (\[[\s\S]*?\]);/);
-        
+        const match = existingContent.match(
+          /export const posts: Post\[\] = (\[[\s\S]*?\]);/
+        );
+
         if (match && match[1]) {
           const existingPosts = JSON.parse(match[1]);
           if (existingPosts.length > 0) {
-            console.log(`✅ Using ${existingPosts.length} existing posts for build`);
-            
+            console.log(
+              `✅ Using ${existingPosts.length} existing posts for build`
+            );
+
             // Create build manifest with fallback data
             createBuildManifest(versionTag, existingPosts);
-            
+
             return {
               success: true,
               version: versionTag,
@@ -406,10 +447,10 @@ async function buildPosts() {
           }
         }
       }
-      
+
       // If no existing posts, create minimal fallback
       console.log("🔧 Creating minimal posts file for build compatibility");
-      
+
       // Create a placeholder post to ensure build doesn't fail
       const fallbackPosts = [
         {
@@ -424,17 +465,19 @@ async function buildPosts() {
             {
               id: "placeholder-cell-1",
               type: "markdown",
-              content: "This is a placeholder post for build compatibility."
-            }
-          ]
-        }
+              content: "This is a placeholder post for build compatibility.",
+            },
+          ],
+        },
       ];
-      
+
       writeVersionedPosts(fallbackPosts, versionTag);
       createBuildManifest(versionTag, fallbackPosts);
-      
-      console.log("⚠️  Build completed with placeholder post data - API was unavailable");
-      
+
+      console.log(
+        "⚠️  Build completed with placeholder post data - API was unavailable"
+      );
+
       return {
         success: true,
         version: versionTag,

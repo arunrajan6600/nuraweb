@@ -43,8 +43,18 @@ exports.handler = async (event, context) => {
     // Parse request body
     let updateData;
     try {
-      updateData = JSON.parse(event.body);
+      // Handle base64 encoded body from API Gateway
+      let body = event.body;
+      if (event.isBase64Encoded) {
+        body = Buffer.from(event.body, "base64").toString("utf-8");
+      }
+
+      updateData = JSON.parse(body);
     } catch (error) {
+      console.error("Body parsing error:", error);
+      console.error("Raw body:", event.body);
+      console.error("Is base64 encoded:", event.isBase64Encoded);
+
       return {
         statusCode: 400,
         headers: {
@@ -54,6 +64,10 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({
           success: false,
           error: "Invalid JSON in request body",
+          debug: {
+            bodyLength: event.body ? event.body.length : 0,
+            isBase64: event.isBase64Encoded || false,
+          },
         }),
       };
     }

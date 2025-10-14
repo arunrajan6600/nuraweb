@@ -70,6 +70,30 @@ function SortableCell({ cell, onChange, onDelete }: CellEditorProps) {
 }
 
 function CellEditor({ cell, onChange, onDelete }: CellEditorProps) {
+  // Helper function to parse content if it's a JSON string (same as in post-cell.tsx)
+  const parseContent = <T,>(content: string | T): T => {
+    if (typeof content === "string") {
+      try {
+        return JSON.parse(content);
+      } catch {
+        return content as T;
+      }
+    }
+    return content;
+  };
+
+  // Get parsed content for display in editor
+  const getParsedContent = () => {
+    if (cell.type === "image") {
+      return parseContent<ImageContent>(cell.content as string | ImageContent);
+    } else if (cell.type === "video") {
+      return parseContent<VideoContent>(cell.content as string | VideoContent);
+    }
+    return cell.content;
+  };
+
+  const parsedContent = getParsedContent();
+
   const handleContentChange = (value: string | ImageContent | VideoContent) => {
     onChange({ ...cell, content: value });
   };
@@ -126,10 +150,10 @@ function CellEditor({ cell, onChange, onDelete }: CellEditorProps) {
           <div className="space-y-2">
             <Label>Image URL</Label>
             <Input
-              value={(cell.content as ImageContent).url}
+              value={(parsedContent as ImageContent).url || ""}
               onChange={(e) =>
                 handleContentChange({
-                  ...(cell.content as ImageContent),
+                  ...(parsedContent as ImageContent),
                   url: e.target.value,
                 })
               }
@@ -139,10 +163,10 @@ function CellEditor({ cell, onChange, onDelete }: CellEditorProps) {
           <div className="space-y-2">
             <Label>Alt Text</Label>
             <Input
-              value={(cell.content as ImageContent).alt}
+              value={(parsedContent as ImageContent).alt || ""}
               onChange={(e) =>
                 handleContentChange({
-                  ...(cell.content as ImageContent),
+                  ...(parsedContent as ImageContent),
                   alt: e.target.value,
                 })
               }
@@ -155,14 +179,14 @@ function CellEditor({ cell, onChange, onDelete }: CellEditorProps) {
           <div className="space-y-2">
             <Label>Video URL</Label>
             <Input
-              value={(cell.content as VideoContent).url}
+              value={(parsedContent as VideoContent).url || ""}
               onChange={(e) =>
                 handleContentChange({
-                  ...(cell.content as VideoContent),
+                  ...(parsedContent as VideoContent),
                   url: e.target.value,
-                  title: (cell.content as VideoContent).title || "",
+                  title: (parsedContent as VideoContent).title || "",
                   provider:
-                    (cell.content as VideoContent).provider || "youtube",
+                    (parsedContent as VideoContent).provider || "youtube",
                 })
               }
               placeholder="https://www.youtube.com/watch?v=... or https://vimeo.com/..."
@@ -171,10 +195,10 @@ function CellEditor({ cell, onChange, onDelete }: CellEditorProps) {
           <div className="space-y-2">
             <Label>Title (Optional)</Label>
             <Input
-              value={(cell.content as VideoContent).title || ""}
+              value={(parsedContent as VideoContent).title || ""}
               onChange={(e) =>
                 handleContentChange({
-                  ...(cell.content as VideoContent),
+                  ...(parsedContent as VideoContent),
                   title: e.target.value,
                 })
               }
@@ -184,10 +208,10 @@ function CellEditor({ cell, onChange, onDelete }: CellEditorProps) {
           <div className="space-y-2">
             <Label>Provider</Label>
             <Select
-              value={(cell.content as VideoContent).provider || "youtube"}
+              value={(parsedContent as VideoContent).provider || "youtube"}
               onValueChange={(value) =>
                 handleContentChange({
-                  ...(cell.content as VideoContent),
+                  ...(parsedContent as VideoContent),
                   provider: value as "youtube" | "vimeo" | "direct",
                 })
               }
